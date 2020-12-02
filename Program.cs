@@ -55,9 +55,9 @@ namespace Santa
             foreach (var s in lines)
             {
                 //N-N c: ccccccccccccc
-                if (!r.IsMatch(s))
-                    continue;
                 var m = r.Match(s);
+                if (!m.Success)
+                    continue;
                 var from = int.Parse(m.Groups[1].Value);
                 var to = int.Parse(m.Groups[2].Value);
                 var c = m.Groups[3].Value[0];
