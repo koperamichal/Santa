@@ -11,30 +11,44 @@ namespace Santa
         static void Main(string[] args)
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-            //day01();
+            day01();
             day02();
+            Console.ReadLine();
         }
 
         static void day01()
         {
+            Console.WriteLine();
+            Console.WriteLine("Day 01");
             var lines = System.IO.File.ReadAllLines("01a");
             var numbers = new long[lines.Length];
             for (int i = 0; i < lines.Length; ++i)
                 numbers[i] = long.Parse(lines[i]);
             foreach (var x in numbers)
                 foreach (var y in numbers)
+                    if (x + y == 2020)
+                    {
+                        Console.WriteLine(x * y);
+                        System.Windows.Forms.Clipboard.SetText((x * y).ToString());
+                        goto exit1;
+                    }
+                exit1:
+            foreach (var x in numbers)
+                foreach (var y in numbers)
                     foreach (var z in numbers)
                         if (x + y + z == 2020)
                         {
                             Console.WriteLine(x * y * z);
-                            Console.ReadLine();
                             System.Windows.Forms.Clipboard.SetText((x * y * z).ToString());
-                            return;
+                            goto exit2;
                         }
+                    exit2:;
         }
 
         static void day02()
         {
+            Console.WriteLine();
+            Console.WriteLine("Day 02");
             var lines = System.IO.File.ReadAllLines("day02a");
             System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex("([0-9]+)-([0-9]+) ([a-z]): ([a-z]+)");
             int totalcount = 0;
@@ -60,10 +74,7 @@ namespace Santa
             }
             Console.WriteLine(totalcount);
             Console.WriteLine(totalcount2);
-            //
 
-            //part one
-            Console.ReadLine();
             System.Windows.Forms.Clipboard.SetText(totalcount.ToString());
             System.Windows.Forms.Clipboard.SetText(totalcount2.ToString());
         }
