@@ -13,7 +13,6 @@ namespace Santa
             day01();
             day02();
             Console.ReadLine();
-            //toto bolo upravene doma
         }
 
         static void day01()
