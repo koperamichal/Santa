@@ -10,8 +10,9 @@ namespace Santa
         static void Main(string[] args)
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-            day01();
-            day02();
+            //day01();
+            //day02();
+            day03();
             Console.ReadLine();
         }
 
@@ -76,6 +77,51 @@ namespace Santa
 
             System.Windows.Forms.Clipboard.SetText(totalcount.ToString());
             System.Windows.Forms.Clipboard.SetText(totalcount2.ToString());
+        }
+
+        static void day03()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 03");
+            var lines = System.IO.File.ReadAllLines("day03a");
+            var len = lines[0].Length;
+            {
+                var posx = 0;
+                var posy = 0;
+                int count = 0;
+                for (int i = 0; i < lines.Length; ++i)
+                {
+                    posx = (posx + 3) % len;
+                    ++posy;
+                    if (posy >= lines.Length)
+                        break;
+                    if (lines[posy][posx] == '#')
+                        ++count;
+                }
+                Console.WriteLine(count);
+            }
+            {
+                long total = 1L;
+                (int, int)[] data = { (1, 1), (3, 1), (5, 1), (7, 1), (1, 2) };
+                foreach (var x in data)
+                {
+                    var posx = 0;
+                    var posy = 0;
+                    int count = 0;
+                    for (int i = 0; i < lines.Length; ++i)
+                    {
+                        posx = (posx + x.Item1) % len;
+                        posy = posy + x.Item2;
+                        if (posy >= lines.Length)
+                            break;
+                        if (lines[posy][posx] == '#')
+                            ++count;
+                    }
+                    total *= count;
+                }
+                Console.WriteLine(total);
+                System.Windows.Forms.Clipboard.SetText(total.ToString());
+            }
         }
 
     }
