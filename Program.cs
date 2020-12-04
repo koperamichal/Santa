@@ -10,9 +10,10 @@ namespace Santa
         static void Main(string[] args)
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-            //day01();
-            //day02();
+            day01();
+            day02();
             day03();
+            day04();
             Console.ReadLine();
         }
 
@@ -121,6 +122,112 @@ namespace Santa
                 }
                 Console.WriteLine(total);
                 System.Windows.Forms.Clipboard.SetText(total.ToString());
+            }
+        }
+
+        static void day04()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 04");
+            var lines = System.IO.File.ReadAllLines("day04a");
+            {
+                StringBuilder sb = new StringBuilder();
+                int k = -1;
+                string[] keys = new string[] { "byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid" };
+                int totalcount = 0;
+                int totalcount2 = 0;
+                while (true)
+                {
+                    ++k;
+                    if (k == lines.Length || string.IsNullOrEmpty(lines[k]))
+                    {
+                        var s = sb.ToString();
+                        var ss = s.Split(new char[] { }, StringSplitOptions.RemoveEmptyEntries);
+                        Dictionary<string, string> list = new Dictionary<string, string>();
+                        foreach (var x in ss)
+                        {
+                            var a = x.IndexOf(':');
+                            if (a > 0)
+                                list[x.Substring(0, a)] = x.Substring(a + 1);
+                        }
+                        int count = 0;
+                        foreach (var key in keys)
+                            if (list.ContainsKey(key))
+                                ++count;
+                        if (count == keys.Length)
+                        {
+                            ++totalcount;
+                            count = 0;
+                            int a;
+                            foreach (var key in keys)
+                            {
+                                s = list[key];
+                                switch (key)
+                                {
+                                    case "byr": if (int.TryParse(s, out a) && a >= 1920 && a <= 2002) ++count; break;
+                                    case "iyr": if (int.TryParse(s, out a) && a >= 2010 && a <= 2020) ++count; break;
+                                    case "eyr": if (int.TryParse(s, out a) && a >= 2020 && a <= 2030) ++count; break;
+                                    case "hgt":
+                                        if (s.EndsWith("cm"))
+                                        {
+                                            if (int.TryParse(s.Substring(0, s.Length - 2), out a) && a >= 150 && a <= 193) ++count; break;
+                                        }
+                                        if (s.EndsWith("in"))
+                                        {
+                                            if (int.TryParse(s.Substring(0, s.Length - 2), out a) && a >= 59 && a <= 76) ++count; break;
+                                        }
+                                        break;
+                                    case "hcl":
+                                        if (s.Length == 7 && s[0] == '#')
+                                        {
+                                            bool ok = true;
+                                            for (int i = 1; i < s.Length; ++i)
+                                            {
+                                                if (s[i] >= '0' && s[i] <= '9')
+                                                    continue;
+                                                if (s[i] >= 'a' && s[i] <= 'f')
+                                                    continue;
+                                                ok = false;
+                                            }
+                                            if (ok)
+                                                ++count;
+                                        }
+                                        break;
+                                    case "ecl":
+                                        string[] colors = { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" };
+                                        foreach (var c in colors)
+                                            if (s == c)
+                                                ++count;
+                                        break;
+                                    case "pid":
+                                        if (s.Length == 9)
+                                        {
+                                            bool ok = true;
+                                            for (int i = 1; i < s.Length; ++i)
+                                            {
+                                                if (s[i] >= '0' && s[i] <= '9')
+                                                    continue;
+                                                ok = false;
+                                            }
+                                            if (ok)
+                                                ++count;
+                                        }
+                                        break;
+                                }
+                            }
+                            if (count == keys.Length)
+                                ++totalcount2;
+                        }
+                        sb.Clear();
+                    }
+                    if (k == lines.Length)
+                        break;
+                    sb.AppendLine(lines[k]);
+                }
+                Console.WriteLine(totalcount);
+                System.Windows.Forms.Clipboard.SetText(totalcount.ToString());
+                Console.WriteLine(totalcount2);
+                System.Windows.Forms.Clipboard.SetText(totalcount2.ToString());
             }
         }
 
