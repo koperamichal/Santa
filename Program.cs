@@ -134,6 +134,7 @@ namespace Santa
                 StringBuilder sb = new StringBuilder();
                 int k = -1;
                 string[] keys = new string[] { "byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid" };
+                string[] colors = { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" };
                 int totalcount = 0;
                 int totalcount2 = 0;
                 while (true)
@@ -194,7 +195,6 @@ namespace Santa
                                         }
                                         break;
                                     case "ecl":
-                                        string[] colors = { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" };
                                         foreach (var c in colors)
                                             if (s == c)
                                                 ++count;
