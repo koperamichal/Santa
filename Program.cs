@@ -14,6 +14,7 @@ namespace Santa
             day02();
             day03();
             day04();
+            day05();
             Console.ReadLine();
         }
 
@@ -231,6 +232,42 @@ namespace Santa
             }
         }
 
+        static void day05()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 05");
+            var lines = System.IO.File.ReadAllLines("day5a");
+            int max = 0;
+            HashSet<int> list = new HashSet<int>();
+            foreach (var s in lines)
+            {
+                //var s = "FBFBBFFRLR";
+                int pos1 = 0;
+                int pos2 = 127;
+                int pos3 = 0;
+                int pos4 = 7;
+                foreach (var c in s)
+                {
+                    var diff1 = (pos2 - pos1 + 1) / 2;
+                    var diff2 = (pos4 - pos3 + 1) / 2;
+                    switch (c)
+                    {
+                        case 'B': pos1 = pos1 + diff1; break;
+                        case 'F': pos2 = pos2 - diff1; break;
+                        case 'R': pos3 = pos3 + diff2; break;
+                        case 'L': pos4 = pos4 - diff2; break;
+                    }
+                }
+                var id = pos1 * 8 + pos3;
+                list.Add(id);
+                if (id > max)
+                    max = id;
+            }
+            Console.WriteLine(max);
+            for (int i = 0; i < max; ++i)
+                if (list.Contains(i - 1) && list.Contains(i + 1) && !list.Contains(i))
+                    Console.WriteLine(i);
+        }
     }
 
 }
