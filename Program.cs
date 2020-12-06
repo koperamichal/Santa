@@ -10,11 +10,12 @@ namespace Santa
         static void Main(string[] args)
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-            day01();
-            day02();
-            day03();
-            day04();
-            day05();
+            //day01();
+            //day02();
+            //day03();
+            //day04();
+            //day05();
+            day06();
             Console.ReadLine();
         }
 
@@ -268,6 +269,46 @@ namespace Santa
                 if (list.Contains(i - 1) && list.Contains(i + 1) && !list.Contains(i))
                     Console.WriteLine(i);
         }
+
+        static void day06()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 05");
+            var lines = System.IO.File.ReadAllLines("day6a");
+            int count = 0;
+            int count2 = 0;
+            int i = -1;
+            int g = 0;
+            HashSet<char> list = new HashSet<char>();
+            Dictionary<char, int> dict = new Dictionary<char, int>();
+            while (true)
+            {
+                ++i;
+                if (i >= lines.Length || string.IsNullOrEmpty(lines[i]))
+                {
+                    count += list.Count;
+                    foreach (var x in dict)
+                        if (x.Value == g)
+                            ++count2;
+                    list.Clear();
+                    dict.Clear();
+                    g = -1;
+                }
+                if (i >= lines.Length)
+                    break;
+                ++g;
+                foreach (var x in lines[i])
+                {
+                    if (list.Add(x))
+                        dict[x] = 1;
+                    else
+                        ++dict[x];
+                }
+            }
+            Console.WriteLine(count);
+            Console.WriteLine(count2);
+        }
+
     }
 
 }
