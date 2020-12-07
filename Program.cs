@@ -15,7 +15,8 @@ namespace Santa
             //day03();
             //day04();
             //day05();
-            day06();
+            //day06();
+            //day07();
             Console.ReadLine();
         }
 
@@ -273,7 +274,7 @@ namespace Santa
         static void day06()
         {
             Console.WriteLine();
-            Console.WriteLine("Day 05");
+            Console.WriteLine("Day 06");
             var lines = System.IO.File.ReadAllLines("day6a");
             int count = 0;
             int count2 = 0;
@@ -307,6 +308,110 @@ namespace Santa
             }
             Console.WriteLine(count);
             Console.WriteLine(count2);
+        }
+
+        class bag_class
+        {
+            public string Text;
+            public long Count;
+            public HashSet<string> items = new HashSet<string>();
+            public List<(string name, int count)> list = new List<(string, int)>();
+            public bool finished;
+        }
+
+        static void day07()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 07");
+            var lines = System.IO.File.ReadAllLines("day7a");
+
+            Dictionary<string, bag_class> dict = new Dictionary<string, bag_class>();
+            dict["no other bag"] = new bag_class() { Text = "no other bag" };
+            foreach (var line in lines)
+            {
+                int a = line.IndexOf(" contain ");
+                var bag = line.Substring(0, a).TrimEnd('s');
+                var s = line.Substring(a + " contain ".Length).TrimEnd('.');
+                var parts = s.Split(',');   //N S
+                for (int i = 0; i < parts.Length; ++i)
+                    parts[i] = parts[i].Trim().TrimEnd('s');
+                var n = new bag_class() { Text = bag };
+                foreach (var x in parts)
+                    if (x != "no other bag")
+                    {
+                        n.items.Add(x.Substring(2));
+                        n.list.Add((x.Substring(2), int.Parse(x.Substring(0, 1))));
+                    }
+                if (n.list.Count == 0)
+                    n.finished = true;
+                dict[bag] = n;
+            }
+            while (true)
+            {
+                bool change = false;
+                foreach (var n in dict)
+                {
+                    var bag = n.Value;
+                    HashSet<string> toadd = new HashSet<string>();
+                    foreach (var x in bag.items)
+                        foreach (var xx in dict[x].items)
+                            toadd.Add(xx);
+                    foreach (var x in toadd)
+                        change |= bag.items.Add(x);
+                }
+
+                //another way
+                //foreach (var n in dict)
+                //{
+                //    again:
+                //    foreach (var x in n.Value.items)
+                //    {
+                //        var nn = dict[x];
+                //        foreach (var xx in nn.items)
+                //        {
+                //            if (n.Value.items.Add(xx))
+                //            {
+                //                change = true;
+                //                goto again;
+                //            }
+
+                //        }
+                //    }
+                //}
+                if (!change)
+                    break;
+            }
+            int count = 0;
+            foreach (var n in dict)
+                if (n.Value.items.Contains("shiny gold bag"))
+                    ++count;
+            Console.WriteLine(count.ToString());
+
+            //part2
+            while (true)
+            {
+                bool change = false;
+                foreach (var n in dict)
+                {
+                    var bag = n.Value;
+                    if (bag.finished)
+                        continue;
+                    bool found = false;
+                    foreach (var x in bag.list)
+                        if (!dict[x.name].finished)
+                            found = true;
+                    if (!found)
+                    {
+                        foreach (var x in bag.list)
+                            bag.Count += (dict[x.name].Count + 1) * x.count;
+                        bag.finished = true;
+                        change = true;
+                    }
+                }
+                if (!change)
+                    break;
+            }
+            Console.WriteLine(dict["shiny gold bag"].Count.ToString());
         }
 
     }
