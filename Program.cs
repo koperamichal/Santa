@@ -17,6 +17,7 @@ namespace Santa
             //day05();
             //day06();
             //day07();
+            day08();
             Console.ReadLine();
         }
 
@@ -412,6 +413,85 @@ namespace Santa
                     break;
             }
             Console.WriteLine(dict["shiny gold bag"].Count.ToString());
+        }
+
+        static void day08()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 08");
+            var lines = System.IO.File.ReadAllLines("day08a");
+
+            (int op, int value)[] ops = new (int, int)[lines.Length];
+            for (int i = 0; i < lines.Length; ++i)
+            {
+                switch (lines[i].Substring(0, 3))
+                {
+                    case "acc":
+                        ops[i] = (0, int.Parse(lines[i].Substring(4)));
+                        break;
+                    case "jmp":
+                        ops[i] = (1, int.Parse(lines[i].Substring(4)));
+                        break;
+                    case "nop":
+                        ops[i] = (2, int.Parse(lines[i].Substring(4)));
+                        break;
+                }
+            }
+            //part A
+            {
+                int pos = 0;
+                long accumulator = 0;
+                HashSet<int> list = new HashSet<int>();
+                while (true)
+                {
+                    if (!list.Add(pos))
+                    {
+                        Console.WriteLine(accumulator);
+                        break;
+                    }
+                    switch (ops[pos].op)
+                    {
+                        case 0: accumulator += ops[pos].value; ++pos; break;
+                        case 1: pos += ops[pos].value; break;
+                        case 2: ++pos; break;
+                    }
+                }
+            }
+            //part B
+            for (int i = 0; i < ops.Length; ++i)
+            {
+                //int fix_op = 0;
+                int pos = 0;
+                long accumulator = 0;
+                HashSet<int> list = new HashSet<int>();
+                while (true)
+                {
+                    if (pos == ops.Length)
+                    {
+                        Console.WriteLine(accumulator);
+                        return;
+                    }
+                    if (!list.Add(pos))
+                        break;
+                    switch (ops[pos].op)
+                    {
+                        case 0: accumulator += ops[pos].value; ++pos; break;
+                        case 1:
+                            if (pos != i)
+                                pos += ops[pos].value;
+                            else
+                                ++pos;
+                            break;
+                        case 2:
+                            if (pos == i)
+                                pos += ops[pos].value;
+                            else
+                                ++pos;
+                            break;
+                    }
+                }
+
+            }
         }
 
     }
