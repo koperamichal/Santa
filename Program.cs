@@ -17,7 +17,8 @@ namespace Santa
             //day05();
             //day06();
             //day07();
-            day08();
+            //day08();
+            //day09();
             Console.ReadLine();
         }
 
@@ -492,6 +493,66 @@ namespace Santa
                 }
 
             }
+        }
+
+        static void day09()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 09");
+            var lines = System.IO.File.ReadAllLines("day09a");
+            Queue<long> numbers = new Queue<long>();
+            List<long> list = new List<long>();
+            for (int i = 0; i < 25; ++i)
+                numbers.Enqueue(long.Parse(lines[i]));
+            foreach (var x in numbers)
+                list.Add(x);
+            long num = 0;
+            for (int i = 25; i < lines.Length; ++i)
+            {
+                HashSet<long> dict = new HashSet<long>();
+                foreach (var x in numbers)
+                    dict.Add(x);
+                numbers.Dequeue();
+                num = long.Parse(lines[i]);
+                bool found = false;
+                foreach (var x in dict)
+                    if (dict.Contains(num - x))
+                    {
+                        found = true;
+                        break;
+                    }
+                if (!found)
+                {
+                    Console.WriteLine(num);
+                    break;
+                }
+                list.Add(num);
+                numbers.Enqueue(num);
+            }
+            //
+            for (int i = 0; i < list.Count; ++i)
+            {
+                long total = 0;
+                long max = long.MinValue;
+                long min = long.MaxValue;
+                for (int j = i; j < list.Count; ++j)
+                {
+                    var x = list[j];
+                    if (x > max)
+                        max = x;
+                    if (x < min)
+                        min = x;
+                    total += x;
+                    if (total == num)
+                    {
+                        Console.WriteLine(min + max);
+                        return;
+                    }
+                    if (total > num)
+                        break;
+                }
+            }
+
         }
 
     }
