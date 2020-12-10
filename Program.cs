@@ -19,6 +19,7 @@ namespace Santa
             //day07();
             //day08();
             //day09();
+            day10();
             Console.ReadLine();
         }
 
@@ -553,6 +554,62 @@ namespace Santa
                 }
             }
 
+        }
+
+        static void day10()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 10");
+            var lines = System.IO.File.ReadAllLines("day10a");
+            List<int> list = new List<int>();
+            foreach (var s in lines)
+                list.Add(int.Parse(s));
+            list.Sort();
+            Dictionary<int, int> diff = new Dictionary<int, int>();
+            diff[1] = 0;
+            diff[2] = 0;
+            diff[3] = 1;
+            int now = 0;
+            long total = 1;
+            int count = 0;
+            foreach (var x in list)
+            {
+                if (x - now == 1)
+                {
+                    ++count;
+                }
+                else
+                {
+                    switch (count)
+                    {
+                        case 0: break;
+                        case 1: break;
+                        case 2: total *= 2; break;
+                        case 3: total *= 4; break;
+                        case 4: total *= 7; break;
+                        default: break;
+                    }
+                    count = 0;
+                }
+                ++diff[x - now];
+                now = x;
+            }
+            switch (count)
+            {
+                case 0: break;
+                case 1: break;
+                case 2: total *= 2; break;
+                case 3: total *= 4; break;
+                case 4: total *= 7; break;
+                default: break;
+            }
+            Console.WriteLine(diff[1] * diff[3]);
+            Console.WriteLine(total);
+            //0125: 012, 02                                     *2
+            //01236: 013, 023, 0123, 03                         *4
+            //012347: 014, 024, 034, 0124, 0134, 0234, 01234    *7
+            //0123458: *13
+            //1 1 2 4 7 13 24 ...
         }
 
     }
