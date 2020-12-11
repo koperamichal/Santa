@@ -19,7 +19,9 @@ namespace Santa
             //day07();
             //day08();
             //day09();
-            day10();
+            //day10();
+            day11a();
+            day11b();
             Console.ReadLine();
         }
 
@@ -610,6 +612,265 @@ namespace Santa
             //012347: 014, 024, 034, 0124, 0134, 0234, 01234    *7
             //0123458: *13
             //1 1 2 4 7 13 24 ...
+        }
+
+        static void day11a()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 11");
+            var lines = System.IO.File.ReadAllLines("day11a");
+            var len = lines[0].Length;
+            bool change = true;
+            int count = 0;
+            while (change)
+            {
+                change = false;
+                var lines2 = new string[lines.Length];
+                for (int j = 0; j < lines.Length; ++j)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < len; ++i)
+                    {
+                        switch (lines[j][i])
+                        {
+                            case '.':
+                                sb.Append('.');
+                                break;
+                            case 'L':
+                                count = 0;
+                                if (j >= lines.Length - 1)
+                                    ++count;
+                                else if (lines[j + 1][i] != '#')
+                                    ++count;
+
+                                if (i >= len - 1)
+                                    ++count;
+                                else if (lines[j][i + 1] != '#')
+                                    ++count;
+
+                                if (j <= 0)
+                                    ++count;
+                                else if (lines[j - 1][i] != '#')
+                                    ++count;
+
+                                if (i <= 0)
+                                    ++count;
+                                else if (lines[j][i - 1] != '#')
+                                    ++count;
+
+                                if (j >= lines.Length - 1 || i >= len - 1)
+                                    ++count;
+                                else if (lines[j + 1][i + 1] != '#')
+                                    ++count;
+
+                                if (j >= lines.Length - 1 || i <= 0)
+                                    ++count;
+                                else if (lines[j + 1][i - 1] != '#')
+                                    ++count;
+
+                                if (j <= 0 || i >= len - 1)
+                                    ++count;
+                                else if (lines[j - 1][i + 1] != '#')
+                                    ++count;
+
+                                if (j <= 0 || i <= 0)
+                                    ++count;
+                                else if (lines[j - 1][i - 1] != '#')
+                                    ++count;
+
+                                if (count == 8)
+                                {
+                                    sb.Append('#');
+                                    if (lines[j][i] != '#')
+                                        change = true;
+                                }
+                                else
+                                {
+                                    sb.Append('L');
+                                    if (lines[j][i] != 'L')
+                                        change = true;
+                                }
+                                break;
+                            case '#':
+                                count = 0;
+                                if (j >= lines.Length - 1)
+                                    ;
+                                else if (lines[j + 1][i] == '#')
+                                    ++count;
+
+                                if (i >= len - 1)
+                                    ;
+                                else if (lines[j][i + 1] == '#')
+                                    ++count;
+
+                                if (j <= 0)
+                                    ;
+                                else if (lines[j - 1][i] == '#')
+                                    ++count;
+
+                                if (i <= 0)
+                                    ;
+                                else if (lines[j][i - 1] == '#')
+                                    ++count;
+
+                                if (j >= lines.Length - 1 || i >= len - 1)
+                                    ;
+                                else if (lines[j + 1][i + 1] == '#')
+                                    ++count;
+
+                                if (j >= lines.Length - 1 || i <= 0)
+                                    ;
+                                else if (lines[j + 1][i - 1] == '#')
+                                    ++count;
+
+                                if (j <= 0 || i >= len - 1)
+                                    ;
+                                else if (lines[j - 1][i + 1] == '#')
+                                    ++count;
+
+                                if (j <= 0 || i <= 0)
+                                    ;
+                                else if (lines[j - 1][i - 1] == '#')
+                                    ++count;
+                                if (count >= 4)
+                                {
+                                    sb.Append('L');
+                                    if (lines[j][i] != 'L')
+                                        change = true;
+                                }
+                                else
+                                {
+                                    sb.Append('#');
+                                    if (lines[j][i] != '#')
+                                        change = true;
+                                }
+                                break;
+                        }
+                    }
+                    lines2[j] = sb.ToString();
+                }
+                lines = lines2;
+            }
+            count = 0;
+            foreach (var s in lines)
+                foreach (var c in s)
+                    if (c == '#')
+                        ++count;
+            Console.WriteLine(count);
+        }
+
+        static void day11b()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 11");
+            var lines = System.IO.File.ReadAllLines("day11a");
+            var len = lines[0].Length;
+            bool change = true;
+            int count = 0;
+            (int x, int y)[] dirs = { (1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1) };
+            while (change)
+            {
+                change = false;
+                var lines2 = new string[lines.Length];
+                for (int j = 0; j < lines.Length; ++j)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < len; ++i)
+                    {
+                        switch (lines[j][i])
+                        {
+                            case '.':
+                                sb.Append('.');
+                                break;
+                            case 'L':
+                                count = 0;
+                                foreach (var dir in dirs)
+                                {
+                                    for (int k = 1; k <= len; ++k)
+                                    {
+                                        if (j + dir.x * k < 0 || j + dir.x * k > lines.Length - 1 || i + dir.y * k < 0 || i + dir.y * k > len - 1)
+                                        {
+                                            ++count;
+                                            break;
+                                        }
+                                        else if (lines[j + dir.x * k][i + dir.y * k] == '#')
+                                        {
+                                            break;
+                                        }
+                                        else if (lines[j + dir.x * k][i + dir.y * k] == '.')
+                                        {
+                                            //continue searching
+                                        }
+                                        else if (lines[j + dir.x * k][i + dir.y * k] == 'L')
+                                        {
+                                            ++count;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (count == 8)
+                                {
+                                    sb.Append('#');
+                                    if (lines[j][i] != '#')
+                                        change = true;
+                                }
+                                else
+                                {
+                                    sb.Append('L');
+                                    if (lines[j][i] != 'L')
+                                        change = true;
+                                }
+                                break;
+                            case '#':
+                                count = 0;
+                                foreach (var dir in dirs)
+                                {
+                                    for (int k = 1; k <= len; ++k)
+                                    {
+                                        if (j + dir.x * k < 0 || j + dir.x * k > lines.Length - 1 || i + dir.y * k < 0 || i + dir.y * k > len - 1)
+                                        {
+                                            break;
+                                        }
+                                        else if (lines[j + dir.x * k][i + dir.y * k] == '#')
+                                        {
+                                            ++count;
+                                            break;
+                                        }
+                                        else if (lines[j + dir.x * k][i + dir.y * k] == '.')
+                                        {
+                                            //continue searching
+                                        }
+                                        else if (lines[j + dir.x * k][i + dir.y * k] == 'L')
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (count >= 5)
+                                {
+                                    sb.Append('L');
+                                    if (lines[j][i] != 'L')
+                                        change = true;
+                                }
+                                else
+                                {
+                                    sb.Append('#');
+                                    if (lines[j][i] != '#')
+                                        change = true;
+                                }
+                                break;
+                        }
+                    }
+                    lines2[j] = sb.ToString();
+                }
+                lines = lines2;
+            }
+            count = 0;
+            foreach (var s in lines)
+                foreach (var c in s)
+                    if (c == '#')
+                        ++count;
+            Console.WriteLine(count);
         }
 
     }
