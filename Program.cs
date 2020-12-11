@@ -17,11 +17,11 @@ namespace Santa
             //day05();
             //day06();
             //day07();
-            //day08();
+            day08();
             //day09();
             //day10();
-            day11a();
-            day11b();
+            //day11a();
+            //day11b();
             Console.ReadLine();
         }
 
@@ -441,30 +441,8 @@ namespace Santa
                         break;
                 }
             }
-            //part A
+            for (int i = -1; i < ops.Length; ++i)
             {
-                int pos = 0;
-                long accumulator = 0;
-                HashSet<int> list = new HashSet<int>();
-                while (true)
-                {
-                    if (!list.Add(pos))
-                    {
-                        Console.WriteLine(accumulator);
-                        break;
-                    }
-                    switch (ops[pos].op)
-                    {
-                        case 0: accumulator += ops[pos].value; ++pos; break;
-                        case 1: pos += ops[pos].value; break;
-                        case 2: ++pos; break;
-                    }
-                }
-            }
-            //part B
-            for (int i = 0; i < ops.Length; ++i)
-            {
-                //int fix_op = 0;
                 int pos = 0;
                 long accumulator = 0;
                 HashSet<int> list = new HashSet<int>();
@@ -476,25 +454,30 @@ namespace Santa
                         return;
                     }
                     if (!list.Add(pos))
-                        break;
-                    switch (ops[pos].op)
                     {
-                        case 0: accumulator += ops[pos].value; ++pos; break;
-                        case 1:
-                            if (pos != i)
-                                pos += ops[pos].value;
-                            else
-                                ++pos;
-                            break;
-                        case 2:
-                            if (pos == i)
-                                pos += ops[pos].value;
-                            else
-                                ++pos;
-                            break;
+                        if (i < 0)
+                            Console.WriteLine(accumulator);
+                        break;
+                    }
+                    if (pos == i)
+                    {
+                        switch (ops[pos].op)
+                        {
+                            case 0: accumulator += ops[pos].value; ++pos; break;
+                            case 1: ++pos; break;
+                            case 2: pos += ops[pos].value; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (ops[pos].op)
+                        {
+                            case 0: accumulator += ops[pos].value; ++pos; break;
+                            case 1: pos += ops[pos].value; break;
+                            case 2: ++pos; break;
+                        }
                     }
                 }
-
             }
         }
 
