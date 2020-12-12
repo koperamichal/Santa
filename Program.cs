@@ -22,7 +22,7 @@ namespace Santa
             //day10();
             //day11a();
             //day11b();
-            //day12();
+            day12();
 
             Console.ReadLine();
         }
@@ -866,103 +866,60 @@ namespace Santa
             (char cmd, int value)[] list = new (char cmd, int value)[lines.Length];
             for (int i = 0; i < list.Length; i++)
                 list[i] = (lines[i][0], int.Parse(lines[i].Substring(1)));
-            int x = 0, y = 0, rot = 0;  //E=0,N=1,W=2,S=3,L=+1,R=-1
+            //int x = 0, y = 0, rot = 0;  //E=0,N=1,W=2,S=3,L=+1,R=-1
+            (int x, int y, int rot) pos = (0, 0, 0);
             foreach (var cmd in list)
             {
                 switch (cmd.cmd)
                 {
-                    case 'N': y -= cmd.value; break;
-                    case 'S': y += cmd.value; break;
-                    case 'E': x += cmd.value; break;
-                    case 'W': x -= cmd.value; break;
-                    case 'L':
-                        switch (cmd.value)
-                        {
-                            case 90: rot = (rot + 1) % 4; break;
-                            case 180: rot = (rot + 2) % 4; break;
-                            case 270: rot = (rot + 3) % 4; break;
-                            default: return;
-                        }
-                        break;
-                    case 'R':
-                        switch (cmd.value)
-                        {
-                            case 90: rot = (rot + 3) % 4; break;
-                            case 180: rot = (rot + 2) % 4; break;
-                            case 270: rot = (rot + 1) % 4; break;
-                            default: return;
-                        }
-                        break;
+                    case 'N': pos.y -= cmd.value; break;
+                    case 'S': pos.y += cmd.value; break;
+                    case 'E': pos.x += cmd.value; break;
+                    case 'W': pos.x -= cmd.value; break;
+                    case 'L': pos.rot = (pos.rot + cmd.value + 360) % 360; break;
+                    case 'R': pos.rot = (pos.rot - cmd.value + 360) % 360; break;
                     case 'F':
-                        switch (rot)
+                        switch (pos.rot)
                         {
-                            case 0: x += cmd.value; break;
-                            case 1: y -= cmd.value; break;
-                            case 2: x -= cmd.value; break;
-                            case 3: y += cmd.value; break;
+                            case 0: pos.x += cmd.value; break;
+                            case 90: pos.y -= cmd.value; break;
+                            case 180: pos.x -= cmd.value; break;
+                            case 270: pos.y += cmd.value; break;
+                            default: return;
                         }
                         break;
                 }
             }
-            Console.WriteLine(Math.Abs(x) + Math.Abs(y));
+            Console.WriteLine(Math.Abs(pos.x) + Math.Abs(pos.y));
 
-            x = 0; y = 0; rot = 0;  //E=0,N=1,W=2,S=3,L=+1,R=-1
-            int wx = 10, wy = -1;
+            pos = (0, 0, 0);
+            (int x, int y) w = (10, -1);
+            int a;
             foreach (var cmd in list)
             {
                 switch (cmd.cmd)
                 {
-                    case 'N': wy -= cmd.value; break;
-                    case 'S': wy += cmd.value; break;
-                    case 'E': wx += cmd.value; break;
-                    case 'W': wx -= cmd.value; break;
+                    case 'N': w.y -= cmd.value; break;
+                    case 'S': w.y += cmd.value; break;
+                    case 'E': w.x += cmd.value; break;
+                    case 'W': w.x -= cmd.value; break;
                     case 'L':
-                        switch (cmd.value)
-                        {
-                            case 90:
-                                rot = wx;
-                                wx = wy;
-                                wy = -rot;
-                                break;
-                            case 180:
-                                wx = -wx;
-                                wy = -wy;
-                                break;
-                            case 270:
-                                rot = wx;
-                                wx = -wy;
-                                wy = rot;
-                                break;
-                            default: return;
-                        }
+                        a = cmd.value;
+                        while ((a -= 90) >= 0)
+                            w = (w.y, -w.x);
                         break;
                     case 'R':
-                        switch (cmd.value)
-                        {
-                            case 270:
-                                rot = wx;
-                                wx = wy;
-                                wy = -rot;
-                                break;
-                            case 180:
-                                wx = -wx;
-                                wy = -wy;
-                                break;
-                            case 90:
-                                rot = wx;
-                                wx = -wy;
-                                wy = rot;
-                                break;
-                            default: return;
-                        }
+                        a = cmd.value;
+                        while ((a -= 90) >= 0)
+                            w = (-w.y, w.x);
                         break;
                     case 'F':
-                        x += wx * cmd.value;
-                        y += wy * cmd.value;
+                        pos.x += w.x * cmd.value;
+                        pos.y += w.y * cmd.value;
                         break;
                 }
             }
-            Console.WriteLine(Math.Abs(x) + Math.Abs(y));
+            Console.WriteLine(Math.Abs(pos.x) + Math.Abs(pos.y));
         }
 
     }
