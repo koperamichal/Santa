@@ -17,11 +17,13 @@ namespace Santa
             //day05();
             //day06();
             //day07();
-            day08();
+            //day08();
             //day09();
             //day10();
             //day11a();
             //day11b();
+            //day12();
+
             Console.ReadLine();
         }
 
@@ -854,6 +856,113 @@ namespace Santa
                     if (c == '#')
                         ++count;
             Console.WriteLine(count);
+        }
+
+        static void day12()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 12");
+            var lines = System.IO.File.ReadAllLines("day12a");
+            (char cmd, int value)[] list = new (char cmd, int value)[lines.Length];
+            for (int i = 0; i < list.Length; i++)
+                list[i] = (lines[i][0], int.Parse(lines[i].Substring(1)));
+            int x = 0, y = 0, rot = 0;  //E=0,N=1,W=2,S=3,L=+1,R=-1
+            foreach (var cmd in list)
+            {
+                switch (cmd.cmd)
+                {
+                    case 'N': y -= cmd.value; break;
+                    case 'S': y += cmd.value; break;
+                    case 'E': x += cmd.value; break;
+                    case 'W': x -= cmd.value; break;
+                    case 'L':
+                        switch (cmd.value)
+                        {
+                            case 90: rot = (rot + 1) % 4; break;
+                            case 180: rot = (rot + 2) % 4; break;
+                            case 270: rot = (rot + 3) % 4; break;
+                            default: return;
+                        }
+                        break;
+                    case 'R':
+                        switch (cmd.value)
+                        {
+                            case 90: rot = (rot + 3) % 4; break;
+                            case 180: rot = (rot + 2) % 4; break;
+                            case 270: rot = (rot + 1) % 4; break;
+                            default: return;
+                        }
+                        break;
+                    case 'F':
+                        switch (rot)
+                        {
+                            case 0: x += cmd.value; break;
+                            case 1: y -= cmd.value; break;
+                            case 2: x -= cmd.value; break;
+                            case 3: y += cmd.value; break;
+                        }
+                        break;
+                }
+            }
+            Console.WriteLine(Math.Abs(x) + Math.Abs(y));
+
+            x = 0; y = 0; rot = 0;  //E=0,N=1,W=2,S=3,L=+1,R=-1
+            int wx = 10, wy = -1;
+            foreach (var cmd in list)
+            {
+                switch (cmd.cmd)
+                {
+                    case 'N': wy -= cmd.value; break;
+                    case 'S': wy += cmd.value; break;
+                    case 'E': wx += cmd.value; break;
+                    case 'W': wx -= cmd.value; break;
+                    case 'L':
+                        switch (cmd.value)
+                        {
+                            case 90:
+                                rot = wx;
+                                wx = wy;
+                                wy = -rot;
+                                break;
+                            case 180:
+                                wx = -wx;
+                                wy = -wy;
+                                break;
+                            case 270:
+                                rot = wx;
+                                wx = -wy;
+                                wy = rot;
+                                break;
+                            default: return;
+                        }
+                        break;
+                    case 'R':
+                        switch (cmd.value)
+                        {
+                            case 270:
+                                rot = wx;
+                                wx = wy;
+                                wy = -rot;
+                                break;
+                            case 180:
+                                wx = -wx;
+                                wy = -wy;
+                                break;
+                            case 90:
+                                rot = wx;
+                                wx = -wy;
+                                wy = rot;
+                                break;
+                            default: return;
+                        }
+                        break;
+                    case 'F':
+                        x += wx * cmd.value;
+                        y += wy * cmd.value;
+                        break;
+                }
+            }
+            Console.WriteLine(Math.Abs(x) + Math.Abs(y));
         }
 
     }
