@@ -22,7 +22,8 @@ namespace Santa
             //day10();
             //day11a();
             //day11b();
-            day12();
+            //day12();
+            day13();
 
             Console.ReadLine();
         }
@@ -920,6 +921,44 @@ namespace Santa
                 }
             }
             Console.WriteLine(Math.Abs(pos.x) + Math.Abs(pos.y));
+        }
+
+        static void day13()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 13");
+            var lines = System.IO.File.ReadAllLines("day13a");
+            var t = int.Parse(lines[0]);
+            List<(int, int)> bus = new List<(int, int)>();
+            int pos = 0;
+            foreach (var s in lines[1].Split(','))
+            {
+                if (int.TryParse(s, out var a))
+                    bus.Add((a, pos));
+                ++pos;
+            }
+            int k = bus[0].Item1;
+            var diff = ((t / bus[0].Item1) + 1) * bus[0].Item1;
+            for (int i = 1; i < bus.Count; ++i)
+            {
+                var a = ((t / bus[i].Item1) + 1) * bus[i].Item1;
+                if (a < diff)
+                {
+                    diff = a;
+                    k = bus[i].Item1;
+                }
+            }
+            Console.WriteLine((diff - t) * k);
+
+            int b = 0;
+            StringBuilder sb = new StringBuilder();
+            //foreach (var x in bus)
+            //    sb.Append(x.Item1 + "*" + (char)('a' + (b++)) + "=X+" + x.Item2 + ",");
+            foreach (var x in bus)
+                sb.Append(x.Item1 + "*" + (char)('a' + (b++)) + "-" + x.Item2 + "=");
+            //and use wolframalpha to solve the problem :D
+            {
+            }
         }
 
     }
