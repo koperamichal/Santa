@@ -1012,22 +1012,16 @@ namespace Santa
                         var address = int.Parse(s.Substring(a + 1, b - a - 1));
                         var value = long.Parse(s.Substring(c + 1));
                         BitArray ar = new BitArray(BitConverter.GetBytes(value));
-                        BitArray ar2 = new BitArray(64, false);
-                        for (int i = 0; i < 36; ++i)
-                        {
-                            switch (mask[35 - i])
-                            {
-                                case '0': ar2.Set(i, false); break;
-                                case '1': ar2.Set(i, true); break;
-                                case 'X': ar2.Set(i, ar.Get(i)); break;
-                            }
-                        }
                         long total = 0L;
                         long aa = 1L;
                         for (int i = 0; i < 36; ++i)
                         {
-                            if (ar2.Get(i))
-                                total += aa;
+                            switch (mask[35 - i])
+                            {
+                                case '0': break;
+                                case '1': total += aa; break;
+                                case 'X': if (ar.Get(i)) total += aa; break;
+                            }
                             aa *= 2;
                         }
                         memory[address] = total;
@@ -1058,28 +1052,19 @@ namespace Santa
                         var address = long.Parse(s.Substring(a + 1, b - a - 1));
                         var value = long.Parse(s.Substring(c + 1));
                         BitArray ar = new BitArray(BitConverter.GetBytes((long)address));
-                        BitArray ar2 = new BitArray(64, false);
+                        long total = 0L;
+                        long aa = 1L;
+                        List<long> mods = new List<long>();
                         for (int i = 0; i < 36; ++i)
                         {
                             switch (mask[35 - i])
                             {
-                                case '0': ar2.Set(i, ar.Get(i)); break;
-                                case '1': ar2.Set(i, true); break;
-                                case 'X': break;
+                                case '0': if (ar.Get(i)) total += aa; break;
+                                case '1': total += aa; break;
+                                case 'X': mods.Add(1L << i); break;
                             }
-                        }
-                        long total = 0L;
-                        long aa = 1L;
-                        for (int i = 0; i < 36; ++i)
-                        {
-                            if (ar2.Get(i))
-                                total += aa;
                             aa *= 2;
                         }
-                        List<long> mods = new List<long>();
-                        for (int i = 0; i < 36; ++i)
-                            if (mask[35 - i] == 'X')
-                                mods.Add(1L << i);
                         var count = 1 << mods.Count;
                         for (int k = 0; k < count; ++k)
                         {
