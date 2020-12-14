@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
+using System.Collections;
 
 namespace Santa
 {
@@ -23,7 +25,8 @@ namespace Santa
             //day11a();
             //day11b();
             //day12();
-            day13();
+            //day13();
+            day14();
 
             Console.ReadLine();
         }
@@ -923,6 +926,16 @@ namespace Santa
             Console.WriteLine(Math.Abs(pos.x) + Math.Abs(pos.y));
         }
 
+        static int TimeLeft(int busId, long time)
+        {
+            int timeLeft = (int)(time % busId);
+            if (timeLeft > 0)
+            {
+                timeLeft = busId - timeLeft;
+            }
+            return timeLeft;
+        }
+
         static void day13()
         {
             Console.WriteLine();
@@ -934,7 +947,7 @@ namespace Santa
             foreach (var s in lines[1].Split(','))
             {
                 if (int.TryParse(s, out var a))
-                    bus.Add((a, pos));
+                    bus.Add((a, pos % a));
                 ++pos;
             }
             int k = bus[0].Item1;
@@ -957,7 +970,136 @@ namespace Santa
             foreach (var x in bus)
                 sb.Append(x.Item1 + "*" + (char)('a' + (b++)) + "-" + x.Item2 + "=");
             //and use wolframalpha to solve the problem :D
+
+            //based on some reddit solution
+            long time = 0;
+            long koef = bus[0].Item1;
+            for (int i = 1; i < bus.Count; ++i)
             {
+                while (true)
+                {
+                    if ((time + bus[i].Item2) % bus[i].Item1 == 0)
+                    {
+                        koef *= bus[i].Item1;
+                        break;
+                    }
+                    time += koef;
+                }
+            }
+            Console.WriteLine(time);
+        }
+
+        static void day14()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 14");
+            var lines = System.IO.File.ReadAllLines("day14a");
+
+            {
+                Dictionary<int, long> memory = new Dictionary<int, long>();
+                string mask = "";
+                foreach (var s in lines)
+                {
+                    if (s.StartsWith("mask = "))
+                    {
+                        mask = s.Substring(7);
+                    }
+                    else
+                    {
+                        var a = s.IndexOf("[");
+                        var b = s.IndexOf("]");
+                        var c = s.LastIndexOf(" ");
+                        var address = int.Parse(s.Substring(a + 1, b - a - 1));
+                        var value = long.Parse(s.Substring(c + 1));
+                        BitArray ar = new BitArray(BitConverter.GetBytes(value));
+                        BitArray ar2 = new BitArray(64, false);
+                        for (int i = 0; i < 36; ++i)
+                        {
+                            switch (mask[35 - i])
+                            {
+                                case '0': ar2.Set(i, false); break;
+                                case '1': ar2.Set(i, true); break;
+                                case 'X': ar2.Set(i, ar.Get(i)); break;
+                            }
+                        }
+                        long total = 0L;
+                        long aa = 1L;
+                        for (int i = 0; i < 36; ++i)
+                        {
+                            if (ar2.Get(i))
+                                total += aa;
+                            aa *= 2;
+                        }
+                        memory[address] = total;
+                    }
+                }
+                {
+                    long total = 0L;
+                    foreach (var x in memory)
+                        total += x.Value;
+                    Console.WriteLine(total);
+                }
+            }
+
+            {
+                Dictionary<long, long> memory = new Dictionary<long, long>();
+                string mask = "";
+                foreach (var s in lines)
+                {
+                    if (s.StartsWith("mask = "))
+                    {
+                        mask = s.Substring(7);
+                    }
+                    else
+                    {
+                        var a = s.IndexOf("[");
+                        var b = s.IndexOf("]");
+                        var c = s.LastIndexOf(" ");
+                        var address = long.Parse(s.Substring(a + 1, b - a - 1));
+                        var value = long.Parse(s.Substring(c + 1));
+                        BitArray ar = new BitArray(BitConverter.GetBytes((long)address));
+                        BitArray ar2 = new BitArray(64, false);
+                        for (int i = 0; i < 36; ++i)
+                        {
+                            switch (mask[35 - i])
+                            {
+                                case '0': ar2.Set(i, ar.Get(i)); break;
+                                case '1': ar2.Set(i, true); break;
+                                case 'X': break;
+                            }
+                        }
+                        long total = 0L;
+                        long aa = 1L;
+                        for (int i = 0; i < 36; ++i)
+                        {
+                            if (ar2.Get(i))
+                                total += aa;
+                            aa *= 2;
+                        }
+                        List<long> mods = new List<long>();
+                        for (int i = 0; i < 36; ++i)
+                            if (mask[35 - i] == 'X')
+                                mods.Add(1L << i);
+                        var count = 1 << mods.Count;
+                        for (int k = 0; k < count; ++k)
+                        {
+                            long bb = total;
+                            ar = new BitArray(BitConverter.GetBytes(k));
+                            for (int j = 0; j < mods.Count; ++j)
+                            {
+                                if (ar.Get(j))
+                                    bb += mods[j];
+                            }
+                            memory[bb] = value;
+                        }
+                    }
+                }
+                {
+                    long total = 0L;
+                    foreach (var x in memory)
+                        total += x.Value;
+                    Console.WriteLine(total);
+                }
             }
         }
 
