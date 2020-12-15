@@ -26,7 +26,8 @@ namespace Santa
             //day11b();
             //day12();
             //day13();
-            day14();
+            //day14();
+            day15();
 
             Console.ReadLine();
         }
@@ -1086,6 +1087,58 @@ namespace Santa
                     Console.WriteLine(total);
                 }
             }
+        }
+
+        static void day15()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 15");
+            //var lines = System.IO.File.ReadAllLines("day15a");
+            var line = "15,12,0,14,3,1";
+            //line = "0,3,6";
+            List<int> list = new List<int>();
+            foreach (var x in line.Split(','))
+                list.Add(int.Parse(x));
+            Dictionary<int, List<int>> dict = new Dictionary<int, List<int>>();
+            for (int i = 0; i < list.Count; ++i)
+            {
+                dict[list[i]] = new List<int>() { i };
+            }
+
+            for (int i = list.Count; i <= 30000000; ++i)
+            {
+                List<int> x;
+                if (dict.TryGetValue(list[i - 1], out x) && x.Count > 1)
+                {
+                    var a = x[x.Count - 1];
+                    var b = x[x.Count - 2];
+                    list.Add(a - b);
+                    if (!dict.TryGetValue(list[i], out x))
+                        dict[list[i]] = new List<int>() { i };
+                    else
+                    {
+                        x.Add(i);
+                        if (x.Count > 2)
+                            x.RemoveAt(0);
+                    }
+                }
+                else
+                {
+                    list.Add(0);
+                    x = dict[0];
+                    x.Add(i);
+                    if (x.Count > 2)
+                        x.RemoveAt(0);
+                }
+                //var a = list.LastIndexOf(list[i - 1]);
+                //var b = list.LastIndexOf(list[i - 1], a - 1);
+                //if (b < 0)
+                //    list.Add(0);
+                //else
+                //    list.Add(a - b);
+            }
+            Console.WriteLine(list[30000000 - 1]);
+
         }
 
     }
