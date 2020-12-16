@@ -1193,11 +1193,11 @@ namespace Santa
             }
             Console.WriteLine(total);
 
-            //brute force
-            HashSet<int> dict = new HashSet<int>();
-            int[] matrix = new int[list_range.Count];
             bool[,] isok = new bool[list_range.Count, list_range.Count];
+            List<(int, int)> poradie = new List<(int, int)>();
             for (int i = 0; i < list_range.Count; i++)
+            {
+                int z = 0;
                 for (int j = 0; j < list_range.Count; j++)
                 {
                     bool found = false;
@@ -1213,22 +1213,34 @@ namespace Santa
                         break;
                     }
                     isok[i, j] = found;
+                    if (!found)
+                        ++z;
                 }
+                poradie.Add((z, i));
+            }
+            poradie.Sort();
+            //najskor treba sort podla stupna volnosti, tie co maju najmenej volnych pozicii tie sa preskumaju najskor a tie co mozu byt skoro vsade, tak tie preskumame az na konci
+            //a zhodou okolnosti, stupne volnosti su presne 1 .. N, takze sa vobec nemusime vraciat a staci to prejst raz, resp. ani raz, cize premennu "dict" mozeme zrusit
+
+            //brute force = backtracking
+            HashSet<int> dict = new HashSet<int>();
+            int[] matrix = new int[list_range.Count];
             int k = 0;
             while (k < list_range.Count)
             {
-                if (isok[k, matrix[k]] || dict.Contains(matrix[k]))
+                var kk = poradie[k].Item2;  //greedy implementation
+                if (isok[kk, matrix[kk]] || dict.Contains(matrix[kk]))
                 {
-                    while ((++matrix[k]) == list_range.Count)
+                    while ((++matrix[kk]) == list_range.Count)
                     {
-                        matrix[k] = 0;
+                        matrix[kk] = 0;
                         --k;
-                        dict.Remove(matrix[k]);
+                        dict.Remove(matrix[kk]);
                     }
                 }
                 else
                 {
-                    dict.Add(matrix[k]);
+                    dict.Add(matrix[kk]);
                     ++k;
                 }
             }
@@ -1237,7 +1249,34 @@ namespace Santa
                 result *= tickets[0][matrix[i]];
             Console.WriteLine(result);
 
-            //or you can use DP (or what is name for it) :) which should be faster but memory
+            ////or you can use DP (or what is name for it) :) which should be faster but a lot more of memory and too slow
+            //Queue<Dictionary<int, int>> q = new Queue<Dictionary<int, int>>();
+            //q.Enqueue(new Dictionary<int, int>());
+            //int kk = 0;
+            //while (q.Count > 0)
+            //{
+            //    ++kk;
+            //    var d = q.Dequeue();
+            //    var k = d.Count;
+            //    if (k == list_range.Count)
+            //    {
+            //        long result = 1L;
+            //        foreach (var x in d)
+            //            if (x.Value < 6)
+            //                result *= tickets[0][x.Key];
+            //        Console.WriteLine(result);
+            //        break;
+            //    }
+            //    for (int i = 0; i < list_range.Count; ++i)
+            //    {
+            //        if (!isok[k, i] && !d.ContainsKey(i))
+            //        {
+            //            var dd = new Dictionary<int, int>(d);
+            //            dd[i] = k;
+            //            q.Enqueue(dd);
+            //        }
+            //    }
+            //}
         }
 
     }
