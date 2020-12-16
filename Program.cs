@@ -27,7 +27,8 @@ namespace Santa
             //day12();
             //day13();
             //day14();
-            day15();
+            //day15();
+            day16();
 
             Console.ReadLine();
         }
@@ -1093,32 +1094,150 @@ namespace Santa
         {
             Console.WriteLine();
             Console.WriteLine("Day 15");
-            var N = 2020;
-            N = 30000000;
             var line = "15,12,0,14,3,1";
             //line = "0,3,6";
             List<int> list = new List<int>();
             foreach (var x in line.Split(','))
                 list.Add(int.Parse(x));
-            Dictionary<int, (int, int)> dict2 = new Dictionary<int, (int, int)>();
-            for (int i = 0; i < list.Count; ++i)
+            foreach (var N in new int[] { 2020, 30000000 })
             {
-                dict2[list[i]] = (-1, i);
+                Dictionary<int, (int, int)> dict2 = new Dictionary<int, (int, int)>();
+                for (int i = 0; i < list.Count; ++i)
+                {
+                    dict2[list[i]] = (-1, i);
+                }
+                var k = list[list.Count - 1];
+                for (int i = list.Count; i < N; ++i)
+                {
+                    if (dict2.TryGetValue(k, out var x) && x.Item1 != -1)
+                    {
+                        k = x.Item2 - x.Item1;
+                    }
+                    else
+                        k = 0;
+                    if (!dict2.TryGetValue(k, out x))
+                        dict2[k] = (-1, i);
+                    else
+                        dict2[k] = (x.Item2, i);
+                }
+                Console.WriteLine(k);
             }
-            var k = list[list.Count - 1];
+        }
 
-            for (int i = list.Count; i < N; ++i)
+        static void day16()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 16");
+            var lines = System.IO.File.ReadAllLines("day16a");
+
+            System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex("([0-9]+)-([0-9]+) or ([0-9]+)-([0-9]+)"); List<(int from1, int to1, int from2, int to2)> list_range = new List<(int from1, int to1, int from2, int to2)>();
+            int state = 0;
+            int total = 0;
+            List<int[]> tickets = new List<int[]>();
+            foreach (var s in lines)
             {
-                if (dict2.TryGetValue(k, out var x) && x.Item1 != -1)
-                    k = x.Item2 - x.Item1;
-                else
-                    k = 0;
-                if (!dict2.TryGetValue(k, out x))
-                    dict2[k] = (-1, i);
-                else
-                    dict2[k] = (x.Item2, i);
+                if (string.IsNullOrEmpty(s))
+                    ++state;
+                else if (state == 0)
+                {
+                    var m = r.Match(s);
+                    list_range.Add((int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value), int.Parse(m.Groups[3].Value), int.Parse(m.Groups[4].Value)));
+                }
+                else if (state == 1)
+                {
+                    if (s == "your ticket:")
+                        continue;
+                    var ss = s.Split(',');
+                    List<int> numbers = new List<int>();
+                    foreach (var sss in ss)
+                        numbers.Add(int.Parse(sss));
+                    tickets.Add(numbers.ToArray());
+                }
+                else if (state == 2)
+                {
+                    if (s == "nearby tickets:")
+                        continue;
+                    var ss = s.Split(',');
+                    List<int> numbers = new List<int>();
+                    foreach (var sss in ss)
+                        numbers.Add(int.Parse(sss));
+                    bool found2 = true;
+                    foreach (var num in numbers)
+                    {
+                        bool found = false;
+                        foreach (var a in list_range)
+                        {
+                            if (a.from1 <= num && num <= a.to1)
+                            {
+                                found = true;
+                                break;
+                            }
+                            if (a.from2 <= num && num <= a.to2)
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found)
+                        {
+                            total += num;
+                            found2 = false;
+                        }
+                        else
+                        {
+                        }
+                    }
+                    if (found2)
+                        tickets.Add(numbers.ToArray());
+                }
             }
-            Console.WriteLine(k);
+            Console.WriteLine(total);
+
+            //brute force
+            HashSet<int> dict = new HashSet<int>();
+            int[] matrix = new int[list_range.Count];
+            bool[,] isok = new bool[list_range.Count, list_range.Count];
+            for (int i = 0; i < list_range.Count; i++)
+                for (int j = 0; j < list_range.Count; j++)
+                {
+                    bool found = false;
+                    var a = list_range[i];
+                    foreach (var t in tickets)
+                    {
+                        var num = t[j];
+                        if (a.from1 <= num && num <= a.to1)
+                            continue;
+                        if (a.from2 <= num && num <= a.to2)
+                            continue;
+                        found = true;
+                        break;
+                    }
+                    isok[i, j] = found;
+                }
+            int k = 0;
+            while (k < list_range.Count)
+            {
+                if (isok[k, matrix[k]] || dict.Contains(matrix[k]))
+                {
+                    while ((++matrix[k]) == list_range.Count)
+                    {
+                        matrix[k] = 0;
+                        --k;
+                        dict.Remove(matrix[k]);
+                    }
+                }
+                else
+                {
+                    dict.Add(matrix[k]);
+                    ++k;
+                }
+            }
+            long result = 1L;
+            for (int i = 0; i < 6; ++i)
+                result *= tickets[0][matrix[i]];
+            Console.WriteLine(result);
+
+            //or you can use DP (or what is name for it) :) which should be faster but memory
         }
 
     }
