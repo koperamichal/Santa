@@ -28,7 +28,8 @@ namespace Santa
             //day13();
             //day14();
             //day15();
-            day16();
+            //day16();
+            day17();
 
             Console.ReadLine();
         }
@@ -1277,6 +1278,143 @@ namespace Santa
             //        }
             //    }
             //}
+        }
+
+        static string print17(HashSet<(int, int, int)> cubes)
+        {
+            var min = int.MinValue;
+            foreach (var x in cubes)
+            {
+                if (x.Item1 > min)
+                    min = x.Item1;
+                if (x.Item2 > min)
+                    min = x.Item2;
+                if (x.Item3 > min)
+                    min = x.Item3;
+            }
+            StringBuilder sb = new StringBuilder();
+            for (int i = -min; i <= min; ++i)
+            {
+                for (int j = -min; j <= min; ++j)
+                {
+                    for (int k = -min; k <= min; ++k)
+                    {
+                        if (cubes.Contains((j, k, i)))
+                            sb.Append('#');
+                        else
+                            sb.Append('.');
+                    }
+                    sb.AppendLine();
+                }
+                sb.AppendLine();
+            }
+            return sb.ToString();
+        }
+
+        static void day17()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 17");
+            var lines = System.IO.File.ReadAllLines("day17a");
+            var n = lines.Length;
+            {
+                var cubes = new HashSet<(int, int, int)>();
+                var cubes2 = new HashSet<(int, int, int)>();
+                for (int i = 0; i < n; ++i)
+                    for (int j = 0; j < n; ++j)
+                        if (lines[i][j] == '#')
+                            cubes.Add((i, j, 0));
+                List<(int, int, int)> dirs = new List<(int, int, int)>();
+                for (int i = -1; i < 2; ++i)
+                    for (int j = -1; j < 2; ++j)
+                        for (int k = -1; k < 2; ++k)
+                        {
+                            if (i == 0 && j == 0 && k == 0)
+                                continue;
+                            dirs.Add((i, j, k));
+                        }
+                for (int cycle = 0; cycle < 6; ++cycle)
+                {
+                    //var s = print17(cubes);
+                    cubes2.Clear();
+                    for (int i = 0 - cycle - 1; i < n + cycle + 1; ++i)
+                        for (int j = 0 - cycle - 1; j < n + cycle + 1; ++j)
+                            for (int k = -cycle - 1; k <= cycle + 1; ++k)
+                            {
+                                var c = (i, j, k);
+                                int count = 0;
+                                foreach (var d in dirs)
+                                    if (cubes.Contains((d.Item1 + c.Item1, d.Item2 + c.Item2, d.Item3 + c.Item3)))
+                                        ++count;
+                                if (cubes.Contains(c))
+                                {
+                                    if (count == 2 || count == 3)
+                                        cubes2.Add(c);
+                                }
+                                else
+                                {
+                                    if (count == 3)
+                                        cubes2.Add(c);
+                                }
+                            }
+
+                    //transfer
+                    cubes.Clear();
+                    foreach (var c in cubes2)
+                        cubes.Add(c);
+                }
+                Console.WriteLine(cubes.Count);
+            }
+            //part2
+            {
+                var cubes = new HashSet<(int, int, int, int)>();
+                var cubes2 = new HashSet<(int, int, int, int)>();
+                for (int i = 0; i < n; ++i)
+                    for (int j = 0; j < n; ++j)
+                        if (lines[i][j] == '#')
+                            cubes.Add((i, j, 0, 0));
+                List<(int, int, int, int)> dirs = new List<(int, int, int, int)>();
+                for (int i = -1; i < 2; ++i)
+                    for (int j = -1; j < 2; ++j)
+                        for (int k = -1; k < 2; ++k)
+                            for (int z = -1; z < 2; ++z)
+                            {
+                                if (i == 0 && j == 0 && k == 0 && z == 0)
+                                    continue;
+                                dirs.Add((i, j, k, z));
+                            }
+                for (int cycle = 0; cycle < 6; ++cycle)
+                {
+                    cubes2.Clear();
+                    for (int i = 0 - cycle - 1; i < n + cycle + 1; ++i)
+                        for (int j = 0 - cycle - 1; j < n + cycle + 1; ++j)
+                            for (int k = -cycle - 1; k <= cycle + 1; ++k)
+                                for (int z = -cycle - 1; z <= cycle + 1; ++z)
+                                {
+                                    var c = (i, j, k, z);
+                                    int count = 0;
+                                    foreach (var d in dirs)
+                                        if (cubes.Contains((d.Item1 + c.Item1, d.Item2 + c.Item2, d.Item3 + c.Item3, d.Item4 + c.Item4)))
+                                            ++count;
+                                    if (cubes.Contains(c))
+                                    {
+                                        if (count == 2 || count == 3)
+                                            cubes2.Add(c);
+                                    }
+                                    else
+                                    {
+                                        if (count == 3)
+                                            cubes2.Add(c);
+                                    }
+                                }
+
+                    //transfer
+                    cubes.Clear();
+                    foreach (var c in cubes2)
+                        cubes.Add(c);
+                }
+                Console.WriteLine(cubes.Count);
+            }
         }
 
     }
