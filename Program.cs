@@ -29,7 +29,8 @@ namespace Santa
             //day14();
             //day15();
             //day16();
-            day17();
+            //day17();
+            day18();
 
             Console.ReadLine();
         }
@@ -1415,6 +1416,137 @@ namespace Santa
                 }
                 Console.WriteLine(cubes.Count);
             }
+        }
+
+        static string evalute18(string s)
+        {
+            List<long> numbers = new List<long>();
+            List<long> operations = new List<long>();
+            long num = 0;
+            bool any = false;
+            foreach (var c in s)
+            {
+                if (c >= '0' && c <= '9')
+                {
+                    any = true;
+                    num = num * 10 + (int)(c - '0');
+                }
+                else if (any)
+                {
+                    numbers.Add(num);
+                    num = 0;
+                    any = false;
+                }
+                if (c == '+')
+                {
+                    operations.Add(1);
+                }
+                else if (c == '*')
+                {
+                    operations.Add(2);
+                }
+            }
+            num = numbers[0];
+            for (int i = 0; i < operations.Count; ++i)
+            {
+                switch (operations[i])
+                {
+                    case 1: num += numbers[i + 1]; break;
+                    case 2: num *= numbers[i + 1]; break;
+                }
+            }
+            return num.ToString();
+        }
+
+        static string evalute18b(string s)
+        {
+            List<long> numbers = new List<long>();
+            List<long> operations = new List<long>();
+            long num = 0;
+            bool any = false;
+            foreach (var c in s)
+            {
+                if (c >= '0' && c <= '9')
+                {
+                    any = true;
+                    num = num * 10 + (int)(c - '0');
+                }
+                else if (any)
+                {
+                    numbers.Add(num);
+                    num = 0;
+                    any = false;
+                }
+                if (c == '+')
+                {
+                    operations.Add(1);
+                }
+                else if (c == '*')
+                {
+                    operations.Add(2);
+                }
+            }
+
+            for (int i = 0; i < operations.Count; ++i)
+            {
+                if (operations[i] == 1)
+                {
+                    numbers[i] = numbers[i] + numbers[i + 1];
+                    numbers.RemoveAt(i + 1);
+                    operations.RemoveAt(i--);
+                }
+            }
+            if (operations.Count == 0)
+                return numbers[0].ToString();
+
+            num = 1L;
+            foreach (var x in numbers)
+                num *= x;
+            return num.ToString();
+        }
+
+        static void day18()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 18");
+            var lines = System.IO.File.ReadAllLines("day18a");
+            long total = 0L;
+            foreach (var line in lines)
+            {
+                var s = line;
+                while (true)
+                {
+                    var a = s.IndexOf(')');
+                    if (a < 0)
+                        break;
+                    var b = s.LastIndexOf('(', a);
+                    var ss = s.Substring(b + 1, a - b - 1) + " ";
+                    ss = evalute18(ss);
+                    s = s.Remove(b, a - b + 1).Insert(b, ss);
+                }
+                s = evalute18(s + " ");
+                total += long.Parse(s);
+            }
+            Console.WriteLine(total);
+
+            total = 0L;
+            foreach (var line in lines)
+            {
+                var s = line;
+                while (true)
+                {
+                    var a = s.IndexOf(')');
+                    if (a < 0)
+                        break;
+                    var b = s.LastIndexOf('(', a);
+                    var ss = s.Substring(b + 1, a - b - 1) + " ";
+                    ss = evalute18b(ss);
+                    s = s.Remove(b, a - b + 1).Insert(b, ss);
+                }
+                s = evalute18b(s + " ");
+                total += long.Parse(s);
+            }
+            Console.WriteLine(total);
         }
 
     }
