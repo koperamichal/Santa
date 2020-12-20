@@ -30,7 +30,8 @@ namespace Santa
             //day15();
             //day16();
             //day17();
-            day18();
+            //day18();
+            day19();
 
             Console.ReadLine();
         }
@@ -1547,6 +1548,252 @@ namespace Santa
                 total += long.Parse(s);
             }
             Console.WriteLine(total);
+        }
+
+        static IEnumerable<string> getWord(string s, Dictionary<int, string> dict, int max, int k)
+        {
+            //if (k >= max)
+            //{
+            //    yield return "Z";
+            //}
+            //else
+            //if (s == "8")
+            //{
+            //}
+            //else if (s == "11")
+            //{
+            //}
+
+            if (s == "\"a\"")
+            {
+                yield return "a";
+            }
+            else if (s == "\"b\"")
+            {
+                yield return "b";
+            }
+            else if (s == "c")
+            {
+                yield return "c";
+            }
+            else if (s == "d")
+            {
+                yield return "d";
+            }
+            else if (s.Contains("|"))
+            {
+                var a = s.IndexOf('|');
+                var s1 = s.Substring(0, a - 1);
+                var s2 = s.Substring(a + 2);
+                foreach (var x in getWord(s1, dict, max, k))
+                    yield return x;
+                foreach (var x in getWord(s2, dict, max, k))
+                    yield return x;
+                //getWord(s2, dict, allwords);
+            }
+            else
+            {
+                var ss = s.Split();
+                bool loop = false;
+                //foreach (var x in ss)
+                //{
+                //    if (x == "8" || x == "11")
+                //    {
+                //        loop = true;
+                //        break;
+                //    }
+                //}
+                //if (loop && k > 12)
+                //    yield return "Z";
+                if (ss.Length == 1)
+                {
+                    //var w = dict[int.Parse(ss[0])];
+                    //if (w == "\"a\"")
+                    //{
+                    //}
+                    //else if (w == "\"b\"")
+                    //{
+                    //}
+                    //else
+                    //{
+                    //    getWord(dict[int.Parse(ss[0])], dict, allwords);
+                    //}
+
+                    //if (dict[int.Parse(ss[0])] == "8")
+                    //{
+                    //}
+                    //else if (dict[int.Parse(ss[0])] == "11")
+                    //{
+                    //}
+
+                    foreach (var x in getWord(dict[int.Parse(ss[0])], dict, max, k + (loop ? 1 : 0)))
+                        yield return x;
+                }
+                else if (ss.Length == 2)
+                {
+                    foreach (var x in getWord(dict[int.Parse(ss[0])], dict, max, k + (loop ? 1 : 0)))
+                        foreach (var y in getWord(dict[int.Parse(ss[1])], dict, max, k + (loop ? 1 : 0)))
+                            yield return x + y;
+
+                    //getWord(dict[int.Parse(ss[0])], dict, allwords);
+                    //getWord(dict[int.Parse(ss[1])], dict, allwords);
+                }
+                else if (ss.Length == 3)
+                {
+                    foreach (var x in getWord(dict[int.Parse(ss[0])], dict, max, k + (loop ? 1 : 0)))
+                        foreach (var y in getWord(dict[int.Parse(ss[1])], dict, max, k + (loop ? 1 : 0)))
+                            foreach (var z in getWord(dict[int.Parse(ss[2])], dict, max, k + (loop ? 1 : 0)))
+                                yield return x + y + z;
+                    //getWord(ss[0], dict, allwords);
+                    //getWord(ss[1], dict, allwords);
+                    //getWord(ss[2], dict, allwords);
+                    //getWord(dict[int.Parse(ss[1])], dict, allwords);
+                    //getWord(dict[int.Parse(ss[2])], dict, allwords);
+                }
+                else
+                {
+                    //return null;
+                }
+                //StringBuilder sb = new StringBuilder();
+                //foreach (var x in s.Split())
+                //    sb.Append(getWord(x, dict, allwords));
+                //return sb.ToString();
+            }
+            //return null;
+        }
+
+        static void day19()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 19");
+            var lines = System.IO.File.ReadAllLines("day19a");
+
+            bool found = false;
+            Dictionary<int, string> dict = new Dictionary<int, string>();
+            List<string> messeges = new List<string>();
+            int max = 0;
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrEmpty(line))
+                {
+                    found = true;
+                    continue;
+                }
+                if (found)
+                {
+                    messeges.Add(line);
+                    if (line.Length > max)
+                        max = line.Length;
+                }
+                else
+                {
+                    var a = line.IndexOf(':');
+                    dict[int.Parse(line.Substring(0, a))] = line.Substring(a + 2);
+                }
+            }
+            //part1
+            //8: 42
+            //11: 42 31
+
+            ////part2
+            //dict[8] = "42 | 42 8";
+            //dict[11] = "42 31 | 42 11 31";
+            //42 31 alebo 42 42 31 31 alebo 42 42 42 31 31 31
+
+            ////part1 bruteforce
+            //int count = 0;
+            //int total = 0;
+            //foreach (var x in getWord(dict[0], dict, 12, 0))
+            //{
+            //    ++total;
+            //    if (messeges.Contains(x))
+            //    {
+            //        ++count;
+            //        messeges.Remove(x);
+            //    }
+            //}
+            //Console.WriteLine(count);
+            //part2
+            //2097152
+            //kazda sprava ma iba 24 znakov, cize [8] (128 moznosti) + [11] (16384 moznosti)
+
+            //len = 8
+            List<string> list_8 = new List<string>();
+            foreach (var x in getWord(dict[8], dict, 0, 0))
+                list_8.Add(x);
+
+            //len = 16
+            List<string> list_11 = new List<string>();
+            foreach (var x in getWord(dict[11], dict, 0, 0))
+                list_11.Add(x);
+
+            List<string> list_31 = new List<string>();
+            foreach (var x in getWord(dict[31], dict, 0, 0))
+                list_31.Add(x);
+            //takze pre spravy staci overit, ci prvych 8 znakov je z list_8 a dalsich 16 znakov je z list_11
+
+            //part1
+            int count = 0;
+            foreach (var m in messeges)
+            {
+                if (m.Length != 24)
+                    continue;
+                foreach (var s1 in list_8)
+                {
+                    if (string.Compare(s1, 0, m, 0, 8) == 0)
+                    {
+                        foreach (var s2 in list_11)
+                        {
+                            if (string.Compare(s2, 0, m, 8, 16) == 0)
+                            {
+                                ++count;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            Console.WriteLine(count);
+
+            //part2  
+            count = 0;
+            foreach (var m in messeges)
+            {
+                int k0 = 0;
+                found = true;
+                while (found)
+                {
+                    found = false;
+                    foreach (var s1 in list_8)
+                    {
+                        if (string.Compare(s1, 0, m, k0, 8) == 0)
+                        {
+                            found = true;
+                            k0 += 8;
+                            break;
+                        }
+                    }
+                }
+                int k1 = 0;
+                found = true;
+                while (found)
+                {
+                    found = false;
+                    foreach (var s1 in list_31)
+                    {
+                        if (string.Compare(s1, 0, m, k0 + k1, 8) == 0)
+                        {
+                            found = true;
+                            k1 += 8;
+                            break;
+                        }
+                    }
+                }
+                if (m.Length == k0 + k1 && k1 > 0 && k1 - k0 < 0)
+                    ++count;
+            }
+            Console.WriteLine(count);
         }
 
     }
