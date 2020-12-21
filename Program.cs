@@ -31,7 +31,9 @@ namespace Santa
             //day16();
             //day17();
             //day18();
-            day19();
+            //day19();
+            //day20();
+            day21();
 
             Console.ReadLine();
         }
@@ -931,16 +933,6 @@ namespace Santa
             Console.WriteLine(Math.Abs(pos.x) + Math.Abs(pos.y));
         }
 
-        static int TimeLeft(int busId, long time)
-        {
-            int timeLeft = (int)(time % busId);
-            if (timeLeft > 0)
-            {
-                timeLeft = busId - timeLeft;
-            }
-            return timeLeft;
-        }
-
         static void day13()
         {
             Console.WriteLine();
@@ -1550,19 +1542,8 @@ namespace Santa
             Console.WriteLine(total);
         }
 
-        static IEnumerable<string> getWord(string s, Dictionary<int, string> dict, int max, int k)
+        static IEnumerable<string> getWord19(string s, Dictionary<int, string> dict)
         {
-            //if (k >= max)
-            //{
-            //    yield return "Z";
-            //}
-            //else
-            //if (s == "8")
-            //{
-            //}
-            //else if (s == "11")
-            //{
-            //}
 
             if (s == "\"a\"")
             {
@@ -1572,67 +1553,29 @@ namespace Santa
             {
                 yield return "b";
             }
-            else if (s == "c")
-            {
-                yield return "c";
-            }
-            else if (s == "d")
-            {
-                yield return "d";
-            }
             else if (s.Contains("|"))
             {
                 var a = s.IndexOf('|');
                 var s1 = s.Substring(0, a - 1);
                 var s2 = s.Substring(a + 2);
-                foreach (var x in getWord(s1, dict, max, k))
+                foreach (var x in getWord19(s1, dict))
                     yield return x;
-                foreach (var x in getWord(s2, dict, max, k))
+                foreach (var x in getWord19(s2, dict))
                     yield return x;
-                //getWord(s2, dict, allwords);
             }
             else
             {
                 var ss = s.Split();
                 bool loop = false;
-                //foreach (var x in ss)
-                //{
-                //    if (x == "8" || x == "11")
-                //    {
-                //        loop = true;
-                //        break;
-                //    }
-                //}
-                //if (loop && k > 12)
-                //    yield return "Z";
                 if (ss.Length == 1)
                 {
-                    //var w = dict[int.Parse(ss[0])];
-                    //if (w == "\"a\"")
-                    //{
-                    //}
-                    //else if (w == "\"b\"")
-                    //{
-                    //}
-                    //else
-                    //{
-                    //    getWord(dict[int.Parse(ss[0])], dict, allwords);
-                    //}
-
-                    //if (dict[int.Parse(ss[0])] == "8")
-                    //{
-                    //}
-                    //else if (dict[int.Parse(ss[0])] == "11")
-                    //{
-                    //}
-
-                    foreach (var x in getWord(dict[int.Parse(ss[0])], dict, max, k + (loop ? 1 : 0)))
+                    foreach (var x in getWord19(dict[int.Parse(ss[0])], dict))
                         yield return x;
                 }
                 else if (ss.Length == 2)
                 {
-                    foreach (var x in getWord(dict[int.Parse(ss[0])], dict, max, k + (loop ? 1 : 0)))
-                        foreach (var y in getWord(dict[int.Parse(ss[1])], dict, max, k + (loop ? 1 : 0)))
+                    foreach (var x in getWord19(dict[int.Parse(ss[0])], dict))
+                        foreach (var y in getWord19(dict[int.Parse(ss[1])], dict))
                             yield return x + y;
 
                     //getWord(dict[int.Parse(ss[0])], dict, allwords);
@@ -1640,15 +1583,10 @@ namespace Santa
                 }
                 else if (ss.Length == 3)
                 {
-                    foreach (var x in getWord(dict[int.Parse(ss[0])], dict, max, k + (loop ? 1 : 0)))
-                        foreach (var y in getWord(dict[int.Parse(ss[1])], dict, max, k + (loop ? 1 : 0)))
-                            foreach (var z in getWord(dict[int.Parse(ss[2])], dict, max, k + (loop ? 1 : 0)))
+                    foreach (var x in getWord19(dict[int.Parse(ss[0])], dict))
+                        foreach (var y in getWord19(dict[int.Parse(ss[1])], dict))
+                            foreach (var z in getWord19(dict[int.Parse(ss[2])], dict))
                                 yield return x + y + z;
-                    //getWord(ss[0], dict, allwords);
-                    //getWord(ss[1], dict, allwords);
-                    //getWord(ss[2], dict, allwords);
-                    //getWord(dict[int.Parse(ss[1])], dict, allwords);
-                    //getWord(dict[int.Parse(ss[2])], dict, allwords);
                 }
                 else
                 {
@@ -1719,40 +1657,81 @@ namespace Santa
 
             //len = 8
             List<string> list_8 = new List<string>();
-            foreach (var x in getWord(dict[8], dict, 0, 0))
+            foreach (var x in getWord19(dict[8], dict))
                 list_8.Add(x);
 
             //len = 16
             List<string> list_11 = new List<string>();
-            foreach (var x in getWord(dict[11], dict, 0, 0))
+            foreach (var x in getWord19(dict[11], dict))
                 list_11.Add(x);
 
             List<string> list_31 = new List<string>();
-            foreach (var x in getWord(dict[31], dict, 0, 0))
+            foreach (var x in getWord19(dict[31], dict))
                 list_31.Add(x);
             //takze pre spravy staci overit, ci prvych 8 znakov je z list_8 a dalsich 16 znakov je z list_11
 
-            //part1
+            ////part1 slow
+            //int count = 0;
+            //foreach (var m in messeges)
+            //{
+            //    if (m.Length != 24)
+            //        continue;
+            //    foreach (var s1 in list_8)
+            //    {
+            //        if (string.Compare(s1, 0, m, 0, 8) == 0)
+            //        {
+            //            foreach (var s2 in list_11)
+            //            {
+            //                if (string.Compare(s2, 0, m, 8, 16) == 0)
+            //                {
+            //                    ++count;
+            //                    break;
+            //                }
+            //            }
+            //            break;
+            //        }
+            //    }
+            //}
+            //Console.WriteLine(count);
+
+            //part1 fast
             int count = 0;
             foreach (var m in messeges)
             {
                 if (m.Length != 24)
                     continue;
-                foreach (var s1 in list_8)
+                int k0 = 0;
+                found = true;
+                while (found)
                 {
-                    if (string.Compare(s1, 0, m, 0, 8) == 0)
+                    found = false;
+                    foreach (var s1 in list_8)
                     {
-                        foreach (var s2 in list_11)
+                        if (string.Compare(s1, 0, m, k0, 8) == 0)
                         {
-                            if (string.Compare(s2, 0, m, 8, 16) == 0)
-                            {
-                                ++count;
-                                break;
-                            }
+                            found = true;
+                            k0 += 8;
+                            break;
                         }
-                        break;
                     }
                 }
+                int k1 = 0;
+                found = true;
+                while (found && k0 + k1 < m.Length)
+                {
+                    found = false;
+                    foreach (var s1 in list_31)
+                    {
+                        if (string.Compare(s1, 0, m, k0 + k1, 8) == 0)
+                        {
+                            found = true;
+                            k1 += 8;
+                            break;
+                        }
+                    }
+                }
+                if (m.Length == k0 + k1 && k1 > 0 && k1 - k0 < 0)
+                    ++count;
             }
             Console.WriteLine(count);
 
@@ -1777,7 +1756,7 @@ namespace Santa
                 }
                 int k1 = 0;
                 found = true;
-                while (found)
+                while (found && k0 + k1 < m.Length)
                 {
                     found = false;
                     foreach (var s1 in list_31)
@@ -1794,6 +1773,787 @@ namespace Santa
                     ++count;
             }
             Console.WriteLine(count);
+        }
+
+        static bool near20(int a, int b, Dictionary<int, (int, int, int, int)> dict, Dictionary<int, int> reverse)
+        {
+            var x = dict[a];
+            var y = dict[b];
+
+            if (x.Item1 == y.Item1)
+                return true;
+            if (x.Item1 == y.Item2)
+                return true;
+            if (x.Item1 == y.Item3)
+                return true;
+            if (x.Item1 == y.Item4)
+                return true;
+
+            if (x.Item2 == y.Item1)
+                return true;
+            if (x.Item2 == y.Item2)
+                return true;
+            if (x.Item2 == y.Item3)
+                return true;
+            if (x.Item2 == y.Item4)
+                return true;
+
+            if (x.Item3 == y.Item1)
+                return true;
+            if (x.Item3 == y.Item2)
+                return true;
+            if (x.Item3 == y.Item3)
+                return true;
+            if (x.Item3 == y.Item4)
+                return true;
+
+            if (x.Item4 == y.Item1)
+                return true;
+            if (x.Item4 == y.Item2)
+                return true;
+            if (x.Item4 == y.Item3)
+                return true;
+            if (x.Item4 == y.Item4)
+                return true;
+
+
+            if (x.Item1 == reverse[y.Item1])
+                return true;
+            if (x.Item1 == reverse[y.Item2])
+                return true;
+            if (x.Item1 == reverse[y.Item3])
+                return true;
+            if (x.Item1 == reverse[y.Item4])
+                return true;
+
+            if (x.Item2 == reverse[y.Item1])
+                return true;
+            if (x.Item2 == reverse[y.Item2])
+                return true;
+            if (x.Item2 == reverse[y.Item3])
+                return true;
+            if (x.Item2 == reverse[y.Item4])
+                return true;
+
+            if (x.Item3 == reverse[y.Item1])
+                return true;
+            if (x.Item3 == reverse[y.Item2])
+                return true;
+            if (x.Item3 == reverse[y.Item3])
+                return true;
+            if (x.Item3 == reverse[y.Item4])
+                return true;
+
+            if (x.Item4 == reverse[y.Item1])
+                return true;
+            if (x.Item4 == reverse[y.Item2])
+                return true;
+            if (x.Item4 == reverse[y.Item3])
+                return true;
+            if (x.Item4 == reverse[y.Item4])
+                return true;
+            return false;
+        }
+
+        static bool near20b(int x, int b, Dictionary<int, (int, int, int, int)> dict, Dictionary<int, int> reverse)
+        {
+            var y = dict[b];
+
+            if (x == y.Item1)
+                return true;
+            if (x == y.Item2)
+                return true;
+            if (x == y.Item3)
+                return true;
+            if (x == y.Item4)
+                return true;
+
+            if (x == reverse[y.Item1])
+                return true;
+            if (x == reverse[y.Item2])
+                return true;
+            if (x == reverse[y.Item3])
+                return true;
+            if (x == reverse[y.Item4])
+                return true;
+            return false;
+        }
+
+        static IEnumerable<(int, int, int, int)> rotation1(int a, Dictionary<int, (int, int, int, int)> dict, Dictionary<int, int> reverse)
+        {
+            var x = dict[a];    //top, left, bottom, right
+            var y = x;
+            yield return y;
+            yield return (y.Item1, y.Item4, y.Item3, y.Item2);
+            //yield return (y.Item3, y.Item2, y.Item1, y.Item4);
+            //yield return (y.Item3, y.Item4, y.Item1, y.Item2);
+
+            y = (y.Item4, reverse[y.Item1], y.Item2, reverse[y.Item3]);
+            yield return y;
+            yield return (y.Item1, y.Item4, y.Item3, y.Item2);
+            //yield return (y.Item3, y.Item2, y.Item1, y.Item4);
+            //yield return (y.Item3, y.Item4, y.Item1, y.Item2);
+
+            y = (y.Item4, reverse[y.Item1], y.Item2, reverse[y.Item3]);
+            yield return y;
+            yield return (y.Item1, y.Item4, y.Item3, y.Item2);
+            //yield return (y.Item3, y.Item2, y.Item1, y.Item4);
+            //yield return (y.Item3, y.Item4, y.Item1, y.Item2);
+
+            y = (y.Item4, reverse[y.Item1], y.Item2, reverse[y.Item3]);
+            yield return y;
+            yield return (y.Item1, y.Item4, y.Item3, y.Item2);
+            //yield return (y.Item3, y.Item2, y.Item1, y.Item4);
+            //yield return (y.Item3, y.Item4, y.Item1, y.Item2);
+        }
+
+        static void day20()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 20");
+            var lines = System.IO.File.ReadAllLines("day20a");
+
+            bool newtile = true;
+            int id = 0;
+            var N = 10; //1023 je max
+            Dictionary<int, (int, int, int, int)> dict = new Dictionary<int, (int, int, int, int)>();
+            Dictionary<int, int> all = new Dictionary<int, int>();
+            List<string> tile = new List<string>();
+            Dictionary<int, int> reverse = new Dictionary<int, int>();
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrEmpty(line))
+                {
+                    newtile = true;
+                    int a1 = 0, aa1 = 0;                         //top line
+                    int k = 1;
+                    int kk = 1024 / 2;
+                    for (int i = 0; i < N; ++i)
+                    {
+                        if (tile[0][i] == '#')
+                        {
+                            a1 += k;
+                            aa1 += kk;
+                        }
+                        k *= 2;
+                        kk /= 2;
+                    }
+                    int a2 = 0, aa2 = 0;
+                    k = 1;
+                    kk = 1024 / 2;
+                    for (int i = 0; i < N; ++i)
+                    {
+                        if (tile[i][0] == '#')          //left line
+                        {
+                            a2 += k;
+                            aa2 += kk;
+                        }
+                        k *= 2;
+                        kk /= 2;
+                    }
+                    int a3 = 0, aa3 = 0;
+                    k = 1;
+                    kk = 1024 / 2;
+                    for (int i = 0; i < N; ++i)
+                    {
+                        if (tile[N - 1][i] == '#')      //bottom line
+                        {
+                            a3 += k;
+                            aa3 += kk;
+                        }
+                        k *= 2;
+                        kk /= 2;
+                    }
+                    int a4 = 0, aa4 = 0;
+                    k = 1;
+                    kk = 1024 / 2;
+                    for (int i = 0; i < N; ++i)         //right line
+                    {
+                        if (tile[i][N - 1] == '#')
+                        {
+                            a4 += k;
+                            aa4 += kk;
+                        }
+                        k *= 2;
+                        kk /= 2;
+                    }
+                    tile.Clear();
+                    dict[id] = (a1, a2, a3, a4);
+                    reverse[a1] = aa1;
+                    reverse[a2] = aa2;
+                    reverse[a3] = aa3;
+                    reverse[a4] = aa4;
+
+                    reverse[aa1] = a1;
+                    reverse[aa2] = a2;
+                    reverse[aa3] = a3;
+                    reverse[aa4] = a4;
+
+                    if (!all.ContainsKey(a1))
+                        all[a1] = 1;
+                    else
+                        ++all[a1];
+
+                    if (!all.ContainsKey(a2))
+                        all[a2] = 1;
+                    else
+                        ++all[a2];
+
+                    if (!all.ContainsKey(a3))
+                        all[a3] = 1;
+                    else
+                        ++all[a3];
+
+                    if (!all.ContainsKey(a4))
+                        all[a4] = 1;
+                    else
+                        ++all[a4];
+
+                    if (!all.ContainsKey(a1))
+                        all[a1] = 1;
+                    else
+                        ++all[a1];
+
+                    if (!all.ContainsKey(a2))
+                        all[a2] = 1;
+                    else
+                        ++all[a2];
+
+                    if (!all.ContainsKey(a3))
+                        all[a3] = 1;
+                    else
+                        ++all[a3];
+
+                    if (!all.ContainsKey(a4))
+                        all[a4] = 1;
+                    else
+                        ++all[a4];
+
+                    continue;
+                }
+                if (newtile)
+                {
+                    newtile = false;
+                    id = int.Parse(line.Substring(5, line.Length - 6));
+                    continue;
+                }
+                tile.Add(line);
+            }
+            var len = (int)Math.Sqrt(dict.Count);
+            int[,] map = new int[len, len];
+            long total = 1L;
+            List<int> list_2 = new List<int>();
+            List<int> list_3 = new List<int>();
+            List<int> list_4 = new List<int>();
+            foreach (var x in dict)
+            {
+                int count = 0;
+                bool found = false;
+                foreach (var y in dict)
+                {
+                    if (x.Key == y.Key)
+                        continue;
+                    if (x.Value.Item1 == y.Value.Item1)
+                        found = true;
+                    if (x.Value.Item1 == y.Value.Item2)
+                        found = true;
+                    if (x.Value.Item1 == y.Value.Item3)
+                        found = true;
+                    if (x.Value.Item1 == y.Value.Item4)
+                        found = true;
+
+                    if (x.Value.Item1 == reverse[y.Value.Item1])
+                        found = true;
+                    if (x.Value.Item1 == reverse[y.Value.Item2])
+                        found = true;
+                    if (x.Value.Item1 == reverse[y.Value.Item3])
+                        found = true;
+                    if (x.Value.Item1 == reverse[y.Value.Item4])
+                        found = true;
+                }
+                if (found)
+                    ++count;
+
+                found = false;
+                foreach (var y in dict)
+                {
+                    if (x.Key == y.Key)
+                        continue;
+                    if (x.Value.Item2 == y.Value.Item1)
+                        found = true;
+                    if (x.Value.Item2 == y.Value.Item2)
+                        found = true;
+                    if (x.Value.Item2 == y.Value.Item3)
+                        found = true;
+                    if (x.Value.Item2 == y.Value.Item4)
+                        found = true;
+
+                    if (x.Value.Item2 == reverse[y.Value.Item1])
+                        found = true;
+                    if (x.Value.Item2 == reverse[y.Value.Item2])
+                        found = true;
+                    if (x.Value.Item2 == reverse[y.Value.Item3])
+                        found = true;
+                    if (x.Value.Item2 == reverse[y.Value.Item4])
+                        found = true;
+                }
+                if (found)
+                    ++count;
+
+                found = false;
+                foreach (var y in dict)
+                {
+                    if (x.Key == y.Key)
+                        continue;
+                    if (x.Value.Item3 == y.Value.Item1)
+                        found = true;
+                    if (x.Value.Item3 == y.Value.Item2)
+                        found = true;
+                    if (x.Value.Item3 == y.Value.Item3)
+                        found = true;
+                    if (x.Value.Item3 == y.Value.Item4)
+                        found = true;
+
+                    if (x.Value.Item3 == reverse[y.Value.Item1])
+                        found = true;
+                    if (x.Value.Item3 == reverse[y.Value.Item2])
+                        found = true;
+                    if (x.Value.Item3 == reverse[y.Value.Item3])
+                        found = true;
+                    if (x.Value.Item3 == reverse[y.Value.Item4])
+                        found = true;
+                }
+                if (found)
+                    ++count;
+
+                found = false;
+                foreach (var y in dict)
+                {
+                    if (x.Key == y.Key)
+                        continue;
+                    if (x.Value.Item4 == y.Value.Item1)
+                        found = true;
+                    if (x.Value.Item4 == y.Value.Item2)
+                        found = true;
+                    if (x.Value.Item4 == y.Value.Item3)
+                        found = true;
+                    if (x.Value.Item4 == y.Value.Item4)
+                        found = true;
+
+                    if (x.Value.Item4 == reverse[y.Value.Item1])
+                        found = true;
+                    if (x.Value.Item4 == reverse[y.Value.Item2])
+                        found = true;
+                    if (x.Value.Item4 == reverse[y.Value.Item3])
+                        found = true;
+                    if (x.Value.Item4 == reverse[y.Value.Item4])
+                        found = true;
+                }
+                if (found)
+                    ++count;
+                if (count == 2)
+                {
+                    //corner
+                    total *= x.Key;
+                    list_2.Add(x.Key);
+                }
+                else if (count == 3)
+                {
+                    //border  
+                    list_3.Add(x.Key);
+                }
+                else
+                {
+                    //inside
+                    list_4.Add(x.Key);
+                }
+            }
+            Console.WriteLine(total);
+
+            map[0, 0] = list_2[0];
+            list_2.RemoveAt(0);
+            for (int i = 1; i < len - 1; ++i)
+            {
+                var x = map[i - 1, 0];
+                foreach (var y in list_3)
+                {
+                    if (near20(x, y, dict, reverse))
+                    {
+                        map[i, 0] = y;
+                        list_3.Remove(y);
+                        break;
+                    }
+                }
+            }
+            for (int i = 1; i < len - 1; ++i)
+            {
+                var x = map[0, i - 1];
+                foreach (var y in list_3)
+                {
+                    if (near20(x, y, dict, reverse))
+                    {
+                        map[0, i] = y;
+                        list_3.Remove(y);
+                        break;
+                    }
+                }
+            }
+            if (near20(list_2[0], map[0, len - 2], dict, reverse))
+            {
+                map[0, len - 1] = list_2[0];
+                list_2.RemoveAt(0);
+            }
+            else if (near20(list_2[1], map[0, len - 2], dict, reverse))
+            {
+                map[0, len - 1] = list_2[1];
+                list_2.RemoveAt(1);
+            }
+            else if (near20(list_2[2], map[0, len - 2], dict, reverse))
+            {
+                map[0, len - 1] = list_2[2];
+                list_2.RemoveAt(2);
+            }
+
+            if (near20(list_2[0], map[len - 2, 0], dict, reverse))
+            {
+                map[len - 1, 0] = list_2[0];
+                list_2.RemoveAt(0);
+            }
+            else if (near20(list_2[1], map[len - 2, 0], dict, reverse))
+            {
+                map[len - 1, 0] = list_2[1];
+                list_2.RemoveAt(1);
+            }
+            map[len - 1, len - 1] = list_2[0];
+            list_2.RemoveAt(0);
+
+            //zvysny border
+            for (int i = 1; i < len - 1; ++i)
+            {
+                var x = map[i - 1, len - 1];
+                foreach (var y in list_3)
+                {
+                    if (near20(x, y, dict, reverse))
+                    {
+                        map[i, len - 1] = y;
+                        list_3.Remove(y);
+                        break;
+                    }
+                }
+            }
+            for (int i = 1; i < len - 1; ++i)
+            {
+                var x = map[len - 1, i - 1];
+                foreach (var y in list_3)
+                {
+                    if (near20(x, y, dict, reverse))
+                    {
+                        map[len - 1, i] = y;
+                        list_3.Remove(y);
+                        break;
+                    }
+                }
+            }
+            //inside
+            for (int i = 1; i < len - 1; ++i)
+                for (int j = 1; j < len - 1; ++j)
+                {
+                    if (map[i, j] != 0)
+                        continue;
+                    (int, int)[] dirs = { (-1, 0), (0, -1), (1, 0), (0, 1) };
+                    HashSet<int> h = new HashSet<int>();
+                    foreach (var d in dirs)
+                    {
+                        var x = map[i + d.Item1, j + d.Item2];
+                        if (x == 0)
+                            continue;
+                        foreach (var y in list_4)
+                        {
+                            if (near20(x, y, dict, reverse))
+                            {
+                                h.Add(y);
+                            }
+                        }
+                    }
+                    if (h.Count == 1)
+                    {
+                        foreach (var y in h)
+                        {
+                            map[i, j] = y;
+                            list_4.Remove(y);
+                        }
+                    }
+                }
+
+            for (int k = 4; k > 0; --k)
+            {
+                bool change = true;
+                while (change)
+                {
+                    change = false;
+                    for (int i = 1; i < len - 1; ++i)
+                        for (int j = 1; j < len - 1; ++j)
+                        {
+                            if (map[i, j] != 0)
+                                continue;
+                            (int, int)[] dirs = { (-1, 0), (0, -1), (1, 0), (0, 1) };
+                            Dictionary<int, int> h = new Dictionary<int, int>();
+                            foreach (var d in dirs)
+                            {
+                                var x = map[i + d.Item1, j + d.Item2];
+                                if (x == 0)
+                                    continue;
+                                foreach (var y in list_4)
+                                {
+                                    if (near20(x, y, dict, reverse))
+                                    {
+                                        if (!h.ContainsKey(y))
+                                            h[y] = 1;
+                                        else
+                                            ++h[y];
+                                    }
+                                }
+                            }
+                            foreach (var x in h)
+                            {
+                                if (x.Value == k)
+                                {
+                                    change = true;
+                                    map[i, j] = x.Key;
+                                    list_4.Remove(x.Key);
+                                    break;
+                                }
+                            }
+                        }
+                    if (change)
+                        k = 4;
+                }
+            }
+            //map filled
+            //Dictionary<int, int> test1 = new Dictionary<int, int>();
+            //for (int i = 0; i < len; ++i)
+            //    for (int j = 0; j < len; ++j)
+            //    {
+            //        if (i == 0 || j == 0 || i == len - 1 || j == len - 1)
+            //        {
+            //            var x = dict[map[i, j]];
+            //            if (!test1.ContainsKey(x.Item1))
+            //                test1[x.Item1] = 1;
+            //            else
+            //                ++test1[x.Item1];
+
+            //            if (!test1.ContainsKey(x.Item2))
+            //                test1[x.Item2] = 1;
+            //            else
+            //                ++test1[x.Item2];
+
+            //            if (!test1.ContainsKey(x.Item3))
+            //                test1[x.Item3] = 1;
+            //            else
+            //                ++test1[x.Item3];
+
+            //            if (!test1.ContainsKey(x.Item4))
+            //                test1[x.Item4] = 1;
+            //            else
+            //                ++test1[x.Item4];
+
+            //            x = (reverse[x.Item1], reverse[x.Item2], reverse[x.Item3], reverse[x.Item4]);
+
+            //            if (!test1.ContainsKey(x.Item1))
+            //                test1[x.Item1] = 1;
+            //            else
+            //                ++test1[x.Item1];
+
+            //            if (!test1.ContainsKey(x.Item2))
+            //                test1[x.Item2] = 1;
+            //            else
+            //                ++test1[x.Item2];
+
+            //            if (!test1.ContainsKey(x.Item3))
+            //                test1[x.Item3] = 1;
+            //            else
+            //                ++test1[x.Item3];
+
+            //            if (!test1.ContainsKey(x.Item4))
+            //                test1[x.Item4] = 1;
+            //            else
+            //                ++test1[x.Item4];
+            //        }
+            //    }
+            //int count1 = 0;
+            //foreach (var x in test1)
+            //    if (x.Value == 2)
+            //        ++count1;
+
+            //StringBuilder sb = new StringBuilder();
+            //for (int i = 0; i < len; ++i)
+            //{
+            //    for (int j = 0; j < len; ++j)
+            //    {
+            //        sb.Append(map[j, i]);
+            //        sb.Append(',');
+            //    }
+            //    sb.AppendLine();
+            //}
+            //count1 = 0;
+
+
+            //---map is ok, need to found the right rotation
+
+            int count2 = 0;
+            (int, int, int, int, int)[,] rot = new (int, int, int, int, int)[len, len];
+            for (int i = 0; i < len; ++i)
+                for (int j = 0; j < len; ++j)
+                {
+                    if (rot[i, j].Item5 != 0)
+                        continue;
+                    int r = -1;
+                    foreach (var x in rotation1(map[i, j], dict, reverse))
+                    {
+                        ++r;
+                        int[] a = { x.Item2, x.Item1, x.Item4, x.Item3 };
+                        int count = 0;
+                        (int, int)[] dirs = { (-1, 0), (0, -1), (1, 0), (0, 1) };
+                        int k = -1;
+                        foreach (var d in dirs)
+                        {
+                            ++k;
+                            if (i + d.Item1 < 0)
+                            {
+                                ++count;
+                                continue;
+                            }
+                            if (j + d.Item2 < 0)
+                            {
+                                ++count;
+                                continue;
+                            }
+                            if (i + d.Item1 >= len)
+                            {
+                                ++count;
+                                continue;
+                            }
+                            if (j + d.Item2 >= len)
+                            {
+                                ++count;
+                                continue;
+                            }
+                            //if (rot[i + d.Item1, j + d.Item2].Item5 != 0)
+                            //{
+                            //    switch (k)
+                            //    {
+                            //        case 0: if (rot[i + d.Item1, j + d.Item2].Item4 == x.Item2) ++count; break;
+                            //        case 1: if (rot[i + d.Item1, j + d.Item2].Item3 == x.Item1) ++count; break;
+                            //        case 2: if (rot[i + d.Item1, j + d.Item2].Item2 == x.Item4) ++count; break;
+                            //        case 3: if (rot[i + d.Item1, j + d.Item2].Item1 == x.Item3) ++count; break;
+                            //    }
+                            //}
+                            //else
+                            if (near20b(a[k], map[i + d.Item1, j + d.Item2], dict, reverse))
+                            {
+                                ++count;
+                            }
+                        }
+                        if (count == 4)
+                        {
+                            rot[i, j] = (x.Item1, x.Item2, x.Item3, x.Item4, r);
+                            ++count2;
+                            //break;
+                        }
+                    }
+                    //if (count2 == 0)
+                    //{
+                    //    (int, int)[] dirs = { (-1, 0), (0, -1), (1, 0), (0, 1) };
+                    //    foreach (var d in dirs)
+                    //        rot[i + d.Item1, j + d.Item2] = (0, 0, 0, 0, 0);
+                    //    i = 0;
+                    //    j = 0;
+                    //}
+                }
+
+            //Console.WriteLine(count2);
+
+        }
+
+        static void day21()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 21");
+            var lines = System.IO.File.ReadAllLines("day21a");
+
+            HashSet<string> all_parts = new HashSet<string>();
+            HashSet<string> all_alergens = new HashSet<string>();
+
+            List<(HashSet<string> part, HashSet<string> alergen)> foods = new List<(HashSet<string>, HashSet<string>)>();
+            foreach (var line in lines)
+            {
+                var a = line.IndexOf(" (contains ");
+                var s = line.Substring(a + 11);
+                s = s.Remove(s.Length - 1);
+                var alergens = s.Split();
+                for (int i = 0; i < alergens.Length; ++i)
+                    alergens[i] = alergens[i].Trim().Trim(',').Trim().Trim(',').Trim();
+
+                s = line.Substring(0, a);
+                var parts = s.Split();
+                for (int i = 0; i < parts.Length; ++i)
+                    parts[i] = parts[i].Trim().Trim(',').Trim().Trim(',').Trim();
+
+                foods.Add((new HashSet<string>(parts), new HashSet<string>(alergens)));
+
+                foreach (var x in parts)
+                    all_parts.Add(x);
+                foreach (var x in alergens)
+                    all_alergens.Add(x);
+            }
+
+            Dictionary<string, HashSet<string>> dict = new Dictionary<string, HashSet<string>>();
+            foreach (var x in all_alergens)
+            {
+                HashSet<string> list = new HashSet<string>(all_parts);
+                dict[x] = list;
+            }
+
+            Dictionary<string, string> mask = new Dictionary<string, string>();
+            List<(string, string)> tosort = new List<(string, string)>();
+            while (all_alergens.Count > 0)
+            {
+                foreach (var x in dict)
+                {
+                    if (x.Value.Count == 1)
+                    {
+                        string a = null;
+                        foreach (var aa in x.Value)
+                            a = aa;
+                        foreach (var z in dict)
+                            z.Value.Remove(a);
+                        all_alergens.Remove(x.Key);
+                        mask[a] = x.Key;
+                        tosort.Add((x.Key, a));
+                        continue;
+                    }
+                    foreach (var f in foods)
+                    {
+                        if (!f.alergen.Contains(x.Key))
+                            continue;
+                        x.Value.IntersectWith(f.part);
+                    }
+                }
+            }
+            int count = 0;
+            foreach (var f in foods)
+            {
+                foreach (var x in f.part)
+                    if (!mask.ContainsKey(x))
+                        ++count;
+            }
+            Console.WriteLine(count);
+
+            tosort.Sort();
+            StringBuilder sb = new StringBuilder();
+            foreach (var x in tosort)
+                sb.Append(x.Item2 + ",");
+            Console.WriteLine(sb.ToString(0, sb.Length - 1));
         }
 
     }
