@@ -32,9 +32,9 @@ namespace Santa
             //day17();
             //day18();
             //day19();
-            //day20();
+            day20();
             //day21();
-            day22();
+            //day22();
 
             Console.ReadLine();
         }
@@ -1884,28 +1884,118 @@ namespace Santa
         {
             var x = dict[a];    //top, left, bottom, right
             var y = x;
-            yield return y;
-            yield return (y.Item1, y.Item4, y.Item3, y.Item2);
+            yield return y; //0
+            yield return (reverse[y.Item1], y.Item4, reverse[y.Item3], y.Item2);
             //yield return (y.Item3, y.Item2, y.Item1, y.Item4);
             //yield return (y.Item3, y.Item4, y.Item1, y.Item2);
 
             y = (y.Item4, reverse[y.Item1], y.Item2, reverse[y.Item3]);
-            yield return y;
-            yield return (y.Item1, y.Item4, y.Item3, y.Item2);
+            yield return y; //2
+            yield return (reverse[y.Item1], y.Item4, reverse[y.Item3], y.Item2);
             //yield return (y.Item3, y.Item2, y.Item1, y.Item4);
             //yield return (y.Item3, y.Item4, y.Item1, y.Item2);
 
             y = (y.Item4, reverse[y.Item1], y.Item2, reverse[y.Item3]);
-            yield return y;
-            yield return (y.Item1, y.Item4, y.Item3, y.Item2);
+            yield return y; //4
+            yield return (reverse[y.Item1], y.Item4, reverse[y.Item3], y.Item2);
             //yield return (y.Item3, y.Item2, y.Item1, y.Item4);
             //yield return (y.Item3, y.Item4, y.Item1, y.Item2);
 
             y = (y.Item4, reverse[y.Item1], y.Item2, reverse[y.Item3]);
-            yield return y;
-            yield return (y.Item1, y.Item4, y.Item3, y.Item2);
+            yield return y; //6
+            yield return (reverse[y.Item1], y.Item4, reverse[y.Item3], y.Item2);
             //yield return (y.Item3, y.Item2, y.Item1, y.Item4);
             //yield return (y.Item3, y.Item4, y.Item1, y.Item2);
+        }
+
+        static void rotation2(char[,] value, int r, int N)
+        {
+            var k = r / 2;
+            switch (k)
+            {
+                case 1: k = 3; break;
+                case 3: k = 1; break;
+            }
+            while ((k--) > 0)
+            {
+                var value2 = (char[,])value.Clone();
+                for (int i = 0; i < N; ++i)
+                {
+                    //0,0 -> 3,0  0,1-> 2,0
+                    for (int j = 0; j < N; ++j)
+                    {
+                        value[i, j] = value2[N - 1 - j, i];
+                    }
+                }
+            }
+            if (r % 2 == 1)
+            {
+                //reverse
+                for (int i = 0; i < N; ++i)
+                {
+                    for (int j = 0; j < N / 2; ++j)
+                    {
+                        var tmp = value[i, j];
+                        value[i, j] = value[i, N - 1 - j];
+                        value[i, N - j - 1] = tmp;
+                    }
+                }
+            }
+
+            //while (r != 0)
+            //{
+            //    //reverse
+            //    for (int i = 0; i < N; ++i)
+            //    {
+            //        for (int j = 0; j < N / 2; ++j)
+            //        {
+            //            var tmp = value[i, j];
+            //            value[i, j] = value[i, N - 1 - j];
+            //            value[i, N - j - 1] = tmp;
+            //        }
+            //    }
+            //    if ((--r) == 0)
+            //        break;
+            //    --r;
+            //    //rotate
+            //    var value2 = (char[,])value.Clone();
+            //    for (int i = 0; i < N; ++i)
+            //    {
+            //        //0,0 -> 3,0  0,1-> 2,0
+            //        for (int j = 0; j < N; ++j)
+            //        {
+            //            value[i, j] = value2[N - 1 - j, i];
+            //        }
+            //    }
+            //}
+        }
+
+        static string show(char[,] x, int N)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < N; ++i)
+            {
+                for (int j = 0; j < N; ++j)
+                {
+                    sb.Append(x[i, j]);
+                }
+                sb.AppendLine();
+            }
+            return sb.ToString();
+        }
+
+        static string show2(char[,] x, int N)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 1; i < N - 1; ++i)
+            {
+                for (int j = 1; j < N - 1; ++j)
+                {
+                    sb.Append(x[i, j]);
+                }
+                sb.AppendLine();
+            }
+            return sb.ToString();
         }
 
         static void day20()
@@ -1921,6 +2011,7 @@ namespace Santa
             Dictionary<int, int> all = new Dictionary<int, int>();
             List<string> tile = new List<string>();
             Dictionary<int, int> reverse = new Dictionary<int, int>();
+            Dictionary<int, char[,]> tiles = new Dictionary<int, char[,]>();
             foreach (var line in lines)
             {
                 if (string.IsNullOrEmpty(line))
@@ -1978,6 +2069,12 @@ namespace Santa
                         k *= 2;
                         kk /= 2;
                     }
+                    var t = new char[N, N];
+                    for (int i = 0; i < N; ++i)
+                        for (int j = 0; j < N; ++j)
+                            t[i, j] = tile[i][j];
+                    tiles[id] = t;
+
                     tile.Clear();
                     dict[id] = (a1, a2, a3, a4);
                     reverse[a1] = aa1;
@@ -2471,9 +2568,78 @@ namespace Santa
                     //    j = 0;
                     //}
                 }
+            //spravne rotacie, poskladaj mi z toho image
 
-            //Console.WriteLine(count2);
+            for (int i = 0; i < len; ++i)
+            {
+                for (int j = 0; j < len; ++j)
+                {
+                    id = map[i, j];
+                    var t = tiles[id];
+                    var r = rot[i, j].Item5;
+                    rotation2(t, r, N);
+                }
+            }
+            //StringBuilder sb = new StringBuilder();
+            char[,] image = new char[len * (N - 2), len * (N - 2)];
+            for (int i = 0; i < len; ++i)
+            {
+                for (int j = 0; j < len; ++j)
+                {
+                    id = map[j, i];
+                    var t = tiles[id];
+                    for (int ii = 1; ii < N - 1; ++ii)
+                    {
+                        for (int jj = 1; jj < N - 1; ++jj)
+                        {
+                            image[i * (N - 2) + ii - 1, j * (N - 2) + jj - 1] = t[ii, jj];
+                            //image[i * (N - 2) + ii - 1] += t[ii, jj];
+                            //sb.Append(t[ii, jj]);
+                        }
+                        //sb.AppendLine();
+                    }
+                }
+            }
+            //find monster
+            {
+                var monster = new string[] {
+                "                  # ",
+                "#    ##    ##    ###",
+                " #  #  #  #  #  #   " };
+                var count_monster = 0;
+                foreach (var x in monster)
+                    foreach (var xx in x)
+                        if (xx == '#')
+                            ++count_monster;
 
+                var count_image = 0;
+                foreach (var x in image)
+                    if (x == '#')
+                        ++count_image;
+
+                for (int k = 0; k < 8; ++k)
+                {
+                    var clone = (char[,])image.Clone();
+                    rotation2(clone, k, len * (N - 2));
+                    int count = 0;
+                    for (int i = 0; i < len * (N - 2) - monster[0].Length; ++i)
+                        for (int j = 0; j < len * (N - 2) - monster.Length; ++j)
+                        {
+                            count2 = 0;
+                            for (int x = 0; x < monster[0].Length; ++x)
+                                for (int y = 0; y < monster.Length; ++y)
+                                    if (monster[y][x] == '#' && clone[x + i, y + j] == '#')
+                                        ++count2;
+                            if (count2 == count_monster)
+                                ++count;
+                        }
+                    if (count > 0)
+                    {
+                        Console.WriteLine(count_image - count * count_monster);
+                        return;
+                    }
+                }
+            }
         }
 
         static void day21()
