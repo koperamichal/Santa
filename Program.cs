@@ -33,7 +33,8 @@ namespace Santa
             //day18();
             //day19();
             //day20();
-            day21();
+            //day21();
+            day22();
 
             Console.ReadLine();
         }
@@ -2554,6 +2555,179 @@ namespace Santa
             foreach (var x in tosort)
                 sb.Append(x.Item2 + ",");
             Console.WriteLine(sb.ToString(0, sb.Length - 1));
+        }
+
+        static System.Security.Cryptography.SHA256Managed sha = new System.Security.Cryptography.SHA256Managed();
+
+        static string getHash(Queue<int> p1, Queue<int> p2)
+        {
+            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
+            using (System.IO.BinaryWriter writer = new System.IO.BinaryWriter(ms))
+            {
+                foreach (var x in p1)
+                    writer.Write(x);
+                writer.Write(-1);
+                foreach (var x in p2)
+                    writer.Write(x);
+                return Convert.ToBase64String(sha.ComputeHash(ms.ToArray()));
+            }
+        }
+
+        static void day22()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 22");
+            var lines = System.IO.File.ReadAllLines("day22a");
+
+            //part1
+            {
+                Queue<int> p1 = new Queue<int>();
+                Queue<int> p2 = new Queue<int>();
+                bool first = true;
+                foreach (var line in lines)
+                {
+                    if (string.IsNullOrEmpty(line))
+                    {
+                        first = false;
+                        continue;
+                    }
+                    int a;
+                    if (int.TryParse(line, out a))
+                    {
+                        if (first)
+                            p1.Enqueue(a);
+                        else
+                            p2.Enqueue(a);
+                    }
+                }
+
+                int r = 0;
+                while (p1.Count > 0 && p2.Count > 0)
+                {
+                    ++r;
+                    var a = p1.Dequeue();
+                    var b = p2.Dequeue();
+                    if (a > b)
+                    {
+                        p1.Enqueue(a);
+                        p1.Enqueue(b);
+                    }
+                    else
+                    {
+                        p2.Enqueue(b);
+                        p2.Enqueue(a);
+                    }
+                }
+                long total = 0;
+                var p = p1.Count > 0 ? p1 : p2;
+                long k = p.Count;
+                while (k > 0)
+                {
+                    total += (k--) * p.Dequeue();
+                }
+                Console.WriteLine(total);
+            }
+
+            //part2
+            {
+                lines = System.IO.File.ReadAllLines("day22a");
+                Queue<int> p1 = new Queue<int>();
+                Queue<int> p2 = new Queue<int>();
+                bool first = true;
+                foreach (var line in lines)
+                {
+                    if (string.IsNullOrEmpty(line))
+                    {
+                        first = false;
+                        continue;
+                    }
+                    int a;
+                    if (int.TryParse(line, out a))
+                    {
+                        if (first)
+                            p1.Enqueue(a);
+                        else
+                            p2.Enqueue(a);
+                    }
+                }
+
+                int r = 0;
+                while (p1.Count > 0 && p2.Count > 0)
+                {
+                    ++r;
+                    var a = p1.Dequeue();
+                    var b = p2.Dequeue();
+
+                    if (a <= p1.Count && b <= p2.Count)
+                    {
+                        int k = 0;
+                        Queue<int> pp1 = new Queue<int>();
+                        foreach (var x in p1)
+                        {
+                            pp1.Enqueue(x);
+                            if ((++k) == a)
+                                break;
+                        }
+                        k = 0;
+                        Queue<int> pp2 = new Queue<int>();
+                        foreach (var x in p2)
+                        {
+                            pp2.Enqueue(x);
+                            if ((++k) == b)
+                                break;
+                        }
+
+                        HashSet<string> hash = new HashSet<string>();
+                        while (pp1.Count > 0 && pp2.Count > 0 && hash.Add(getHash(pp1, pp2)))
+                        {
+                            ++r;
+                            var aa = pp1.Dequeue();
+                            var bb = pp2.Dequeue();
+                            if (aa > bb)
+                            {
+                                pp1.Enqueue(aa);
+                                pp1.Enqueue(bb);
+                            }
+                            else
+                            {
+                                pp2.Enqueue(bb);
+                                pp2.Enqueue(aa);
+                            }
+                        }
+                        if (pp1.Count > 0)
+                        {
+                            p1.Enqueue(a);
+                            p1.Enqueue(b);
+                        }
+                        else
+                        {
+                            p2.Enqueue(b);
+                            p2.Enqueue(a);
+                        }
+                    }
+                    else if (a > b)
+                    {
+                        p1.Enqueue(a);
+                        p1.Enqueue(b);
+                    }
+                    else
+                    {
+                        p2.Enqueue(b);
+                        p2.Enqueue(a);
+                    }
+                }
+                {
+                    long total = 0;
+                    var p = p1.Count > 0 ? p1 : p2;
+                    long k = p.Count;
+                    while (k > 0)
+                    {
+                        total += (k--) * p.Dequeue();
+                    }
+                    Console.WriteLine(total);
+                }
+            }
+
         }
 
     }
