@@ -32,9 +32,10 @@ namespace Santa
             //day17();
             //day18();
             //day19();
-            day20();
+            //day20();
             //day21();
             //day22();
+            day23();
 
             Console.ReadLine();
         }
@@ -2892,6 +2893,178 @@ namespace Santa
                     }
                     Console.WriteLine(total);
                 }
+            }
+
+        }
+
+        static void day23()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 23");
+
+            //part1
+            {
+                var N = 9;
+                var list = new List<int>(new int[] { 7, 3, 9, 8, 6, 2, 5, 4, 1 });
+                int current = 0;
+                for (int i = 0; i < 100; ++i)
+                {
+                    var num = list[current];
+                    List<int> pick = new List<int>();
+                    for (int k = 0; k < 3; ++k)
+                    {
+                        if (current + 1 >= list.Count)
+                        {
+                            pick.Add(list[0]);
+                            list.RemoveAt(0);
+                        }
+                        else
+                        {
+                            pick.Add(list[current + 1]);
+                            list.RemoveAt(current + 1);
+                        }
+                    }
+                    var dest = num - 1;
+                    while (pick.Contains(dest) || dest <= 0)
+                    {
+                        if ((--dest) <= 0)
+                            dest = N;
+                    }
+                    var a = list.IndexOf(dest);
+                    for (int k = 2; k >= 0; --k)
+                        list.Insert(a + 1, pick[k]);
+                    current = list.IndexOf(num);
+                    if ((++current) >= list.Count)
+                        current = 0;
+
+                }
+                StringBuilder sb = new StringBuilder();
+                current = list.IndexOf(1);
+                while (sb.Length < N - 1)
+                {
+                    if ((++current) >= list.Count)
+                        current = 0;
+                    sb.Append(list[current]);
+                }
+                Console.WriteLine(sb.ToString());
+            }
+
+            //{
+            //    var link = new LinkedList<int>();
+            //    link.AddLast(1);
+            //    link.AddLast(2);
+
+            //    var x = link.First; x.Value;
+            //    var xx = x.Next;xx.Value;
+            //    var xxx = xx.Next;  //null
+            //}
+
+            //part1
+            {
+                var N = 9;
+                var list = new LinkedList<int>(new int[] { 7, 3, 9, 8, 6, 2, 5, 4, 1 });
+                //int current = 0;
+                LinkedListNode<int> current = list.First;
+                List<int> pick = new List<int>();
+                for (int i = 0; i < 100; ++i)
+                {
+                    var num = current.Value;
+                    pick.Clear();
+                    for (int k = 0; k < 3; ++k)
+                    {
+                        var next = current.Next;
+                        if (next == null)
+                        {
+                            pick.Add(list.First.Value);
+                            list.RemoveFirst();
+                        }
+                        else
+                        {
+                            pick.Add(next.Value);
+                            list.Remove(next);
+                        }
+                    }
+                    var dest = num - 1;
+                    while (pick.Contains(dest) || dest <= 0)
+                    {
+                        if ((--dest) <= 0)
+                            dest = N;
+                    }
+                    var a = list.Find(dest);
+                    for (int k = 0; k < 3; ++k)
+                        a = list.AddAfter(a, pick[k]);
+                    current = current.Next;
+                    if (current == null)
+                        current = list.First;
+                }
+                StringBuilder sb = new StringBuilder();
+                current = list.Find(1);
+                while (sb.Length < N - 1)
+                {
+                    current = current.Next;
+                    if (current == null)
+                        current = list.First;
+                    sb.Append(current.Value);
+                }
+                Console.WriteLine(sb.ToString());
+            }
+            //part2
+            {
+                Dictionary<int, LinkedListNode<int>> dict = new Dictionary<int, LinkedListNode<int>>();
+                var list = new LinkedList<int>(new int[] { 7, 3, 9, 8, 6, 2, 5, 4, 1 });
+                while (list.Count < 1000000)
+                    list.AddLast(list.Count + 1);
+                {
+                    //create dict
+                    var x = list.First;
+                    while (x != null)
+                    {
+                        dict[x.Value] = x;
+                        x = x.Next;
+                    }
+                }
+
+                var N = list.Count;
+                LinkedListNode<int> current = list.First;
+                List<int> pick = new List<int>();
+                for (int i = 0; i < 10000000; ++i)
+                {
+                    var num = current.Value;
+                    pick.Clear();
+                    for (int k = 0; k < 3; ++k)
+                    {
+                        var next = current.Next;
+                        if (next == null)
+                        {
+                            pick.Add(list.First.Value);
+                            list.RemoveFirst();
+                        }
+                        else
+                        {
+                            pick.Add(next.Value);
+                            list.Remove(next);
+                        }
+                    }
+                    var dest = num - 1;
+                    while (pick.Contains(dest) || dest <= 0)
+                    {
+                        if ((--dest) <= 0)
+                            dest = N;
+                    }
+                    var a = dict[dest];
+
+                    for (int k = 0; k < 3; ++k)
+                    {
+                        a = list.AddAfter(a, pick[k]);
+                        dict[a.Value] = a;
+                    }
+                    current = current.Next ?? list.First;
+                }
+                current = list.Find(1);
+                var n1 = current.Next ?? list.First;
+                var n2 = n1.Next ?? list.First;
+                Console.WriteLine((long)n1.Value * n2.Value);
+                System.IO.File.WriteAllText("output.txt", n1.Value + " * " + n2.Value);
             }
 
         }
