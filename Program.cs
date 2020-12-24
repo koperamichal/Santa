@@ -35,7 +35,8 @@ namespace Santa
             //day20();
             //day21();
             //day22();
-            day23();
+            //day23();
+            day24();
 
             Console.ReadLine();
         }
@@ -3064,9 +3065,79 @@ namespace Santa
                 var n1 = current.Next ?? list.First;
                 var n2 = n1.Next ?? list.First;
                 Console.WriteLine((long)n1.Value * n2.Value);
-                System.IO.File.WriteAllText("output.txt", n1.Value + " * " + n2.Value);
+                //System.IO.File.WriteAllText("output.txt", n1.Value + " * " + n2.Value);
             }
 
+        }
+
+        static void day24()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 24");
+            var lines = System.IO.File.ReadAllLines("day24a");
+            //e, se, sw, w, nw, and ne
+            HashSet<(int, int)> list = new HashSet<(int, int)>();
+            foreach (var line in lines)
+            {
+                (int, int) now = (0, 0);
+                for (int i = 0; i < line.Length; ++i)
+                {
+                    switch (line[i])
+                    {
+                        case 'e': now = (now.Item1 + 2, now.Item2); break;
+                        case 'w': now = (now.Item1 - 2, now.Item2); break;
+                        case 'n':
+                            if (line[++i] == 'e')
+                                now = (now.Item1 + 1, now.Item2 - 1);
+                            else
+                                now = (now.Item1 - 1, now.Item2 - 1);
+                            break;
+                        case 's':
+                            if (line[++i] == 'e')
+                                now = (now.Item1 + 1, now.Item2 + 1);
+                            else
+                                now = (now.Item1 - 1, now.Item2 + 1);
+                            break;
+                    }
+                }
+                if (!list.Add(now))
+                    list.Remove(now);
+            }
+            Console.WriteLine(list.Count);
+
+            (int, int)[] dirs = { (-2, 0), (2, 0), (1, 1), (1, -1), (-1, -1), (-1, 1) };
+            (int, int)[] dirs0 = { (0, 0), (-2, 0), (2, 0), (1, 1), (1, -1), (-1, -1), (-1, 1) };
+            for (int k = 0; k < 100; ++k)
+            {
+                HashSet<(int, int)> list2 = new HashSet<(int, int)>(list);
+                list.Clear();
+
+                HashSet<(int, int)> list3 = new HashSet<(int, int)>();
+                foreach (var y in list2)
+                    foreach (var dd in dirs0)
+                        list3.Add((y.Item1 + dd.Item1, y.Item2 + dd.Item2));
+
+                foreach (var x in list3)
+                {
+                    int count = 0;
+                    foreach (var d in dirs)
+                        if (list2.Contains((x.Item1 + d.Item1, x.Item2 + d.Item2)))
+                            ++count;
+                    if (list2.Contains(x))
+                    {
+                        //black one
+                        if (count == 1 || count == 2)
+                            list.Add(x);
+                    }
+                    else
+                    {
+                        //white one
+                        if (count == 2)
+                            list.Add(x);
+                    }
+                }
+            }
+            Console.WriteLine(list.Count);
         }
 
     }
