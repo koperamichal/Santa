@@ -36,7 +36,8 @@ namespace Santa
             //day21();
             //day22();
             //day23();
-            day24();
+            //day24();
+            day25();
 
             Console.ReadLine();
         }
@@ -3138,6 +3139,37 @@ namespace Santa
                 }
             }
             Console.WriteLine(list.Count);
+        }
+
+        static void day25()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 25");
+            var key1 = 18356117;
+            var key2 = 5909654;
+            //key1 = 5764801;
+            //key2 = 17807724;
+            int k = 1;
+            for (int i = 0; ; ++i)
+            {
+                k = (k * 7) % 20201227;
+                if (key1 == k)
+                {
+                    long kk = key2;
+                    for (int j = 0; j < i; ++j)
+                        kk = (kk * key2) % 20201227;
+                    Console.WriteLine(kk);
+                    return;
+                }
+                if (key2 == k)
+                {
+                    long kk = key1;
+                    for (int j = 0; j < i; ++j)
+                        kk = (kk * key1) % 20201227;
+                    Console.WriteLine(kk);
+                    return;
+                }
+            }
         }
 
     }
