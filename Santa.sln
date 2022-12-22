@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32228.343
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Santa", "Santa.csproj", "{D20AB98C-E6DC-4B1A-8941-7C6A49C59CEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Santa2022", "Santa2022\Santa2022.csproj", "{1A94DDF1-E4DA-41C8-93F0-502FF510B6E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{D20AB98C-E6DC-4B1A-8941-7C6A49C59CEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D20AB98C-E6DC-4B1A-8941-7C6A49C59CEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D20AB98C-E6DC-4B1A-8941-7C6A49C59CEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A94DDF1-E4DA-41C8-93F0-502FF510B6E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A94DDF1-E4DA-41C8-93F0-502FF510B6E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A94DDF1-E4DA-41C8-93F0-502FF510B6E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A94DDF1-E4DA-41C8-93F0-502FF510B6E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1C903C0C-E920-4485-9363-DE5630E921A3}
 	EndGlobalSection
 EndGlobal
