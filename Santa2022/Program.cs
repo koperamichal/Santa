@@ -16,9 +16,10 @@ namespace Santa2022
             //day02();
             //day03();
             //day04();
-            day05a();
-            day05b();
-
+            //day05a();
+            //day05b();
+            //day06();
+            day07();
 
             Console.ReadLine();
         }
@@ -432,6 +433,164 @@ namespace Santa2022
             foreach (var x in list)
                 s += x.Peek();
             Console.WriteLine(s); TextCopy.ClipboardService.SetText(s);
+        }
+
+        static void day06()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 06");
+            var line = System.IO.File.ReadAllText("06a");
+            for (int i = 3; i < line.Length; ++i)
+            {
+                var c1 = line[i];
+                var c2 = line[i - 1];
+                var c3 = line[i - 2];
+                var c4 = line[i - 3];
+                if (c1 != c2 && c1 != c3 && c1 != c4 && c2 != c3 && c2 != c4 && c3 != c4)
+                {
+                    var s = (i + 1).ToString();
+                    Console.WriteLine(s); TextCopy.ClipboardService.SetText(s);
+                    break;
+                }
+            }
+
+            var N = 14;
+            for (int i = N - 1; i < line.Length; ++i)
+            {
+                char[] cc = new char[N];
+                for (int j = 0; j < N; ++j)
+                    cc[j] = line[i - j];
+                HashSet<char> list = new HashSet<char>();
+                foreach (var c in cc)
+                    if (!list.Add(c))
+                        break;
+                if (list.Count == N)
+                {
+                    var s = (i + 1).ToString();
+                    Console.WriteLine(s); TextCopy.ClipboardService.SetText(s);
+                    break;
+                }
+            }
+
+        }
+
+        class node
+        {
+            public string name;
+            public List<node> children = new List<node>();
+            public long size;
+            public bool isdir;
+            public node parent;
+            public long size_total;
+
+            public long GetSize()
+            {
+                long total = 0;
+                foreach (var x in this.children)
+                    if (!x.isdir)
+                        total += x.size;
+                    else
+                        total += x.GetSize();
+                return total;
+            }
+        }
+
+        static void day07()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Day 07");
+            var lines = System.IO.File.ReadAllLines("07a");
+
+            node root = new node() { isdir = true, name = @"/" };
+            //Dictionary<string, node> dict = new Dictionary<string, node>();
+            //dict[root.name] = root;
+            node now = root;
+            List<node> list = new List<node>();
+            //bool islist = false;
+            foreach (var line in lines)
+            {
+                if (line == "$ cd ..")
+                {
+                    now = now.parent;
+                    continue;
+                }
+                if (line == "$ cd /")
+                {
+                    now = root;
+                    continue;
+                }
+                if (line.StartsWith("$ cd "))
+                {
+                    var name = line.Substring(5);
+                    foreach (var x in now.children)
+                    {
+                        if (x.name == name)
+                        {
+                            now = x;
+                            break;
+                        }
+                    }
+                    continue;
+                }
+                if (line == "$ ls")
+                {
+                    //islist = true;
+                    continue;
+                }
+                if (line.StartsWith("dir "))
+                {
+                    var name = line.Substring(4);
+                    node found = null;
+                    foreach (var x in now.children)
+                    {
+                        if (x.name == name)
+                        {
+                            found = x;
+                            break;
+                        }
+                    }
+                    if (found == null)
+                    {
+                        found = new node() { name = name, parent = now, isdir = true };
+                        now.children.Add(found);
+                        list.Add(found);
+                    }
+                    continue;
+                }
+                {
+                    var a = line.IndexOf(' ');
+                    var n = new node() { name = line.Substring(a + 1), parent = now, size = long.Parse(line.Substring(0, a)) };
+                    now.children.Add(n);
+                }
+            }
+            long total = 0;
+            foreach (var x in list)
+            {
+                x.size_total = x.GetSize();
+                if (x.size_total <= 100000)
+                    total += x.size_total;
+            }
+            root.size_total = root.GetSize();
+
+            var s = total.ToString();
+            Console.WriteLine(s); TextCopy.ClipboardService.SetText(s);
+
+            total = 70000000;
+            var free = total - root.size_total;
+            var need = 30000000 - free;
+
+            long max = long.MaxValue;
+            foreach (var x in list)
+            {
+                if (x.size_total >= need && x.size_total < max)
+                {
+                    max = x.size_total;
+                }
+            }
+
+            s = max.ToString();
+            Console.WriteLine(s); TextCopy.ClipboardService.SetText(s);
+
         }
 
     }
